@@ -237,45 +237,8 @@
 <script src="assessor-data.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-const LS_ITEM='admin_item_mgmt_v1';
-const LS_ASSIGN='admin_assignment_v1';
-let DB, ASSIGN_DB;
-
-function loadDB(){
-  try{DB=JSON.parse(localStorage.getItem(LS_ITEM));}catch{}
-  if(!DB){
-    const aspects=Object.entries(FRAMEWORK.aspects).map(([code,a])=>({code,name:a.name,category:a.category,desc:'',levels:a.levels.map(l=>Array.isArray(l)?[...l]:[l]),status:'Aktif'}));
-    let iid=1;const items=[];
-    for(const role of['hunter','farmer'])for(const q of FRAMEWORK.questions[role])items.push({id:'Q'+String(iid++).padStart(3,'0'),aspect:q.aspect,text:q.text,tipe:'suara',durasi:120,ulang:2,status:'Aktif'});
-    const paket=['hunter','farmer'].map((rk,i)=>{const r=FRAMEWORK.roles[rk];return{id:'P'+(i+1),nama:r.label,versi:1,desc:'',status:'Published',locked:true,assigned:true,showResult:false,items:r.aspects.map(code=>{const it=items.find(x=>x.aspect===code&&FRAMEWORK.questions[rk].some(q=>q.aspect===code&&q.text===x.text));return{itemId:it.id,target:r.targets[code],bobot:r.weights[code]};})};});
-    DB={aspects,items,paket,seq:{item:iid,paket:3}};
-  }
-}
-const SEED_ASSIGN = {
-  assignments:[
-    {id:'A001',paketId:'P1',batchName:'Rekrutmen Sales Lead Q3 2026',periodStart:'2026-09-01T08:00:00',periodEnd:'2026-09-15T17:00:00',deadline:'2026-09-15T17:00:00',asesor:[{nama:'Rina Maheswari',email:'rina@talentlytica.com'},{nama:'Dwi Hartono',email:'dwi@talentlytica.com'}],nama:'Andi Pratama',email:'andi@example.com',wa:'',lang:'id',token:'Ab3xYm9Kp2Qr7Wst',status:'Completed',channel:'manual',createdAt:'2026-09-01T08:00:00.000Z',updatedAt:'2026-09-10T10:00:00.000Z',log:[]},
-    {id:'A002',paketId:'P1',batchName:'Rekrutmen Sales Lead Q3 2026',periodStart:'2026-09-01T08:00:00',periodEnd:'2026-09-15T17:00:00',deadline:'2026-09-15T17:00:00',asesor:[{nama:'Rina Maheswari',email:'rina@talentlytica.com'},{nama:'Dwi Hartono',email:'dwi@talentlytica.com'}],nama:'Budi Santoso',email:'budi@example.com',wa:'',lang:'id',token:'Bc4yZn0Lq3Rs8Xtu',status:'In Progress',channel:'manual',createdAt:'2026-09-01T08:00:00.000Z',updatedAt:'2026-09-10T11:30:00.000Z',log:[]},
-    {id:'A003',paketId:'P1',batchName:'Rekrutmen Sales Lead Q3 2026',periodStart:'2026-09-01T08:00:00',periodEnd:'2026-09-15T17:00:00',deadline:'2026-09-15T17:00:00',asesor:[{nama:'Rina Maheswari',email:'rina@talentlytica.com'},{nama:'Dwi Hartono',email:'dwi@talentlytica.com'}],nama:'Citra Dewi',email:'citra@example.com',wa:'',lang:'id',token:'Cd5aAo1Mr4St9Yuv',status:'Assigned',channel:'manual',createdAt:'2026-09-01T08:00:00.000Z',updatedAt:'2026-09-01T08:00:00.000Z',log:[]},
-    {id:'A004',paketId:'P1',batchName:'Rekrutmen Sales Lead Q3 2026',periodStart:'2026-09-01T08:00:00',periodEnd:'2026-09-15T17:00:00',deadline:'2026-09-15T17:00:00',asesor:[{nama:'Rina Maheswari',email:'rina@talentlytica.com'},{nama:'Dwi Hartono',email:'dwi@talentlytica.com'}],nama:'Dian Rahma',email:'dian@example.com',wa:'',lang:'id',token:'De6bBp2Ns5Tu0Zvw',status:'Completed',channel:'email',createdAt:'2026-09-01T08:00:00.000Z',updatedAt:'2026-09-09T14:20:00.000Z',log:[]},
-    {id:'A005',paketId:'P1',batchName:'Rekrutmen Sales Lead Q3 2026',periodStart:'2026-09-01T08:00:00',periodEnd:'2026-09-15T17:00:00',deadline:'2026-09-15T17:00:00',asesor:[{nama:'Rina Maheswari',email:'rina@talentlytica.com'},{nama:'Dwi Hartono',email:'dwi@talentlytica.com'}],nama:'Eko Wahyu',email:'eko@example.com',wa:'',lang:'id',token:'Ef7cCq3Ot6Uv1Awx',status:'Assigned',channel:'email',createdAt:'2026-09-01T08:00:00.000Z',updatedAt:'2026-09-01T08:00:00.000Z',log:[]},
-    {id:'A006',paketId:'P2',batchName:'Manajer Area Jawa Timur',periodStart:'2026-09-05T09:00:00',periodEnd:'2026-09-20T17:00:00',deadline:'2026-09-20T17:00:00',asesor:[{nama:'Sari Puspita',email:'sari@talentlytica.com'},{nama:'Rizky Firmansyah',email:'rizky@talentlytica.com'}],nama:'Fajar Nugroho',email:'fajar@example.com',wa:'',lang:'id',token:'Fg8dDr4Pu7Vw2Bxy',status:'Started',channel:'manual',createdAt:'2026-09-05T09:00:00.000Z',updatedAt:'2026-09-10T08:45:00.000Z',log:[]},
-    {id:'A007',paketId:'P2',batchName:'Manajer Area Jawa Timur',periodStart:'2026-09-05T09:00:00',periodEnd:'2026-09-20T17:00:00',deadline:'2026-09-20T17:00:00',asesor:[{nama:'Sari Puspita',email:'sari@talentlytica.com'},{nama:'Rizky Firmansyah',email:'rizky@talentlytica.com'}],nama:'Gita Saraswati',email:'gita@example.com',wa:'',lang:'id',token:'Gh9eEs5Qv8Wx3Cyz',status:'Assigned',channel:'manual',createdAt:'2026-09-05T09:00:00.000Z',updatedAt:'2026-09-05T09:00:00.000Z',log:[]},
-    {id:'A008',paketId:'P2',batchName:'Manajer Area Jawa Timur',periodStart:'2026-09-05T09:00:00',periodEnd:'2026-09-20T17:00:00',deadline:'2026-09-20T17:00:00',asesor:[{nama:'Sari Puspita',email:'sari@talentlytica.com'},{nama:'Rizky Firmansyah',email:'rizky@talentlytica.com'}],nama:'Hendra Kusuma',email:'hendra@example.com',wa:'',lang:'id',token:'Hi0fFt6Rw9Xy4Dza',status:'Completed',channel:'manual',createdAt:'2026-09-05T09:00:00.000Z',updatedAt:'2026-09-08T16:00:00.000Z',log:[]},
-    {id:'A009',paketId:'P1',batchName:'Internal Assessment Tech',periodStart:'2026-09-08T08:00:00',periodEnd:'2026-09-25T17:00:00',deadline:'2026-09-25T17:00:00',asesor:[{nama:'Bagas Prasetyo',email:'bagas@talentlytica.com'},{nama:'Mega Wulandari',email:'mega@talentlytica.com'}],nama:'Indah Permata',email:'indah@example.com',wa:'',lang:'id',token:'Ij1gGu7Sx0Yz5Eab',status:'In Progress',channel:'manual',createdAt:'2026-09-08T08:00:00.000Z',updatedAt:'2026-09-10T13:00:00.000Z',log:[]},
-    {id:'A010',paketId:'P1',batchName:'Internal Assessment Tech',periodStart:'2026-09-08T08:00:00',periodEnd:'2026-09-25T17:00:00',deadline:'2026-09-25T17:00:00',asesor:[{nama:'Bagas Prasetyo',email:'bagas@talentlytica.com'},{nama:'Mega Wulandari',email:'mega@talentlytica.com'}],nama:'Joko Susilo',email:'joko@example.com',wa:'',lang:'id',token:'Jk2hHv8Ty1Za6Fbc',status:'Assigned',channel:'manual',createdAt:'2026-09-08T08:00:00.000Z',updatedAt:'2026-09-08T08:00:00.000Z',log:[]},
-    {id:'A011',paketId:'P2',batchName:'Internal Assessment Tech',periodStart:'2026-09-08T08:00:00',periodEnd:'2026-09-25T17:00:00',deadline:'2026-09-25T17:00:00',asesor:[{nama:'Bagas Prasetyo',email:'bagas@talentlytica.com'},{nama:'Mega Wulandari',email:'mega@talentlytica.com'}],nama:'Kartika Sari',email:'kartika@example.com',wa:'',lang:'id',token:'Kl3iIw9Uz2Ab7Gcd',status:'Assigned',channel:'manual',createdAt:'2026-09-08T08:00:00.000Z',updatedAt:'2026-09-08T08:00:00.000Z',log:[]},
-  ],seq:12
-};
-function loadAssign(){
-  try{ASSIGN_DB=JSON.parse(localStorage.getItem(LS_ASSIGN));}catch{}
-  if(!ASSIGN_DB||!Array.isArray(ASSIGN_DB.assignments)||ASSIGN_DB.assignments.length===0){
-    ASSIGN_DB=SEED_ASSIGN;
-  }
-}
-
-function fmtDate(s){if(!s)return'–';const d=new Date(s.includes('T')?s:s+'T00:00:00');return isNaN(d)?'–':d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
+const esc=s=>AD.esc(s);
+function jsq(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 
 function toggleSidebar(){$('sidebar').classList.toggle('collapsed');}
 function toggleSection(id){const el=$(id),chev=$('chev-'+id);if(!el)return;const h=el.style.display==='none';el.style.display=h?'':'none';if(chev)chev.classList.toggle('open',h);}
