@@ -80,48 +80,8 @@
   .search-wrap input { padding: 7px 10px 7px 28px; border-radius: 6px; border: 1px solid var(--nm-border); font-family: inherit; font-size: 13px; background: var(--nm-bg); color: var(--nm-fg); width: 200px; }
   .search-wrap input:focus { outline: none; box-shadow: 0 0 0 2px #bfdbfe; }
 
-  .tbl-wrap { margin-top: 16px; border: 1px solid var(--nm-border); border-radius: var(--nm-radius); overflow: hidden; }
-  .tbl-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--nm-border); font-size: 12px; color: var(--nm-muted-fg); }
-  .tbl-toolbar select { border: 1px solid var(--nm-border); border-radius: 6px; padding: 3px 8px; font-family: inherit; font-size: 12px; background: #fff; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 500; color: var(--nm-muted-fg); border-bottom: 1px solid var(--nm-border); background: #f8fafc; white-space: nowrap; }
-  td { padding: 14px 16px; border-bottom: 1px solid var(--nm-border); vertical-align: middle; }
-  tr:last-child td { border-bottom: 0; }
-  tr.expand-trigger { cursor: pointer; transition: background .12s; }
-  tr.expand-trigger:hover { background: #f8fafc; }
   .muted { color: var(--nm-muted-fg); }
-  .empty { text-align: center; color: var(--nm-muted-fg); padding: 48px; font-size: 13px; }
-
-  .status-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 9999px; padding: 2px 10px; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid; }
-  .sb-active { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-  .sb-ended  { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
-
-  /* progress bar */
-  .prog-bar { display: flex; align-items: center; gap: 8px; min-width: 140px; }
-  .prog-track { flex: 1; height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
-  .prog-fill { height: 100%; border-radius: 9999px; transition: width .3s; }
-  .prog-pct { font-size: 12px; color: var(--nm-muted-fg); width: 36px; text-align: right; flex-shrink: 0; }
-
-  .chevron { display: inline-flex; color: #94a3b8; transition: transform .2s; }
-  .chevron.open { transform: rotate(180deg); color: #3b82f6; }
-  .expand-row td { padding: 0; }
-  .expand-inner { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
-  .expand-inner.open { max-height: 800px; }
-  .expand-content { padding: 16px; background: #f8fafc; border-top: 1px solid var(--nm-border); }
-
-  /* candidate sub-table */
-  .sub-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .sub-table th { background: #f1f5f9; padding: 6px 12px; font-size: 11px; font-weight: 500; color: var(--nm-muted-fg); border-bottom: 1px solid var(--nm-border); }
-  .sub-table td { padding: 10px 12px; border-bottom: 1px solid var(--nm-border); }
-  .sub-table tr:last-child td { border-bottom: 0; }
-  .sub-status { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; padding: 2px 8px; font-size: 10px; font-weight: 600; border: 1px solid; }
-  .ss-assigned   { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
-  .ss-invited    { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-  .ss-inprogress { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
-  .ss-completed  { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-  .ss-expired    { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
-  .ss-cancelled  { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
-
+  .empty { text-align: center; color: var(--nm-muted-fg); padding: 32px; font-size: 13px; }
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: background .15s; }
   .btn-sm { padding: 5px 12px; font-size: 12px; }
   .btn-primary { background: #0f172a; color: #fff; }
@@ -134,45 +94,54 @@
   .empty-state h2 { font-size: 16px; font-weight: 600; color: var(--nm-fg); margin: 0; }
   .empty-state p { font-size: 13px; color: var(--nm-muted-fg); margin: 0; max-width: 320px; }
 
-  /* asesor avatars in table column */
-  .asesor-stack { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-  .asesor-chip { display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 20px; padding: 3px 8px 3px 4px; font-size: 11px; color: #334155; white-space: nowrap; }
+  /* badge status scoring batch — konvensi sama dgn assignment.html (tab asesor) */
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 9999px; padding: 2px 10px; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid; flex-shrink: 0; }
+  .bd-green { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .bd-blue  { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .bd-slate { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
+
+  /* status validasi & status interview per kandidat */
+  .sub-status { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; padding: 2px 8px; font-size: 10px; font-weight: 600; border: 1px solid; white-space: nowrap; }
+  .vs-belum     { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+  .vs-menunggu  { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  .vs-review    { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .vs-validated { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .vs-revised   { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+  .ss-assigned   { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  .ss-invited    { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .ss-inprogress { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .ss-completed  { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .ss-expired    { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .ss-cancelled  { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
+
+  /* avatar bulat berinisial asesor */
   .asesor-avatar { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0; }
-  .asesor-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .dot-done   { background: #22c55e; }
-  .dot-active { background: #3b82f6; }
-  .dot-idle   { background: #cbd5e1; }
 
-  /* modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; display: flex; align-items: center; justify-content: center; }
-  .modal-box { background: #fff; border-radius: 12px; width: 520px; max-width: 95vw; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--nm-border); }
-  .modal-header h3 { font-size: 15px; font-weight: 700; margin: 0; }
-  .modal-close { width: 28px; height: 28px; border: none; background: #f1f5f9; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: #64748b; }
-  .modal-close:hover { background: #e2e8f0; }
-  .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
-  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--nm-border); display: flex; gap: 8px; justify-content: flex-end; }
+  /* ── header besar per-batch, collapsible ── */
+  .orbid-batch { background: #fff; border: 1px solid var(--nm-border); border-radius: var(--nm-radius); margin-bottom: 14px; overflow: hidden; }
+  .orbid-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; cursor: pointer; flex-wrap: wrap; }
+  .orbid-head:hover { background: #f8fafc; }
+  .orbid-chevron { display: inline-flex; color: #94a3b8; transition: transform .2s; flex-shrink: 0; }
+  .orbid-chevron.open { transform: rotate(180deg); color: #3b82f6; }
+  .orbid-name { font-size: 15px; font-weight: 700; color: var(--nm-fg); }
+  .orbid-meta { font-size: 12px; color: var(--nm-muted-fg); margin-left: auto; white-space: nowrap; }
+  .orbid-progress { display: flex; align-items: center; gap: 8px; width: 160px; flex-shrink: 0; }
+  .orbid-progress-track { flex: 1; height: 8px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
+  .orbid-progress-fill { height: 100%; border-radius: 9999px; transition: width .3s; }
+  .orbid-progress-pct { font-size: 13px; font-weight: 700; color: var(--nm-fg); width: 40px; text-align: right; flex-shrink: 0; }
 
-  /* asesor status table in modal */
-  .asesor-status-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--nm-border); }
-  .asesor-status-row:last-child { border-bottom: 0; }
-  .asesor-status-info { display: flex; align-items: center; gap: 10px; }
-  .asesor-status-progress { font-size: 11px; color: var(--nm-muted-fg); text-align: right; }
-  .asesor-remove-btn { width: 24px; height: 24px; border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
-  .asesor-remove-btn:hover { background: #fca5a5; }
-  .asesor-add-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; margin-top: 16px; }
-  .f-group { display: flex; flex-direction: column; gap: 4px; position: relative; }
-  .f-label { font-size: 11px; font-weight: 500; color: var(--nm-muted-fg); }
-  .f-input { padding: 7px 10px; border: 1px solid var(--nm-border); border-radius: 6px; font-family: inherit; font-size: 13px; }
-  .f-input:focus { outline: none; box-shadow: 0 0 0 2px #bfdbfe; }
-  .btn-add-asesor { padding: 7px 14px; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: #0f172a; color: #fff; white-space: nowrap; height: fit-content; }
-  .btn-add-asesor:hover { background: #1e293b; }
-
-  /* combobox dropdown */
-  .asesor-combo-dd { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--nm-border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,.1); z-index: 50; margin-top: 2px; max-height: 160px; overflow-y: auto; }
-  .asesor-combo-item { padding: 7px 10px; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; }
-  .asesor-combo-item:hover, .asesor-combo-item.active-dd { background: #eff6ff; }
-  .asesor-combo-item small { font-size: 10px; color: var(--nm-muted-fg); }
+  .orbid-body { border-top: 1px solid var(--nm-border); }
+  .orbid-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--nm-border); background: #f8fafc; }
+  .orbid-toolbar-count { font-size: 13px; font-weight: 700; color: var(--nm-fg); margin-right: auto; }
+  .orbid-select { border: 1px solid var(--nm-border); border-radius: 6px; padding: 6px 10px; font-family: inherit; font-size: 12px; background: #fff; color: var(--nm-fg); }
+  .orbid-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .orbid-table th { text-align: left; padding: 10px 20px; font-size: 11px; font-weight: 600; color: var(--nm-muted-fg); border-bottom: 1px solid var(--nm-border); background: #fff; white-space: nowrap; }
+  .orbid-table td { padding: 12px 20px; border-bottom: 1px solid var(--nm-border); vertical-align: middle; }
+  .orbid-table tr:last-child td { border-bottom: 0; }
+  .orbid-mini-prog { display: flex; align-items: center; gap: 6px; min-width: 90px; }
+  .orbid-mini-track { flex: 1; height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
+  .orbid-mini-fill { height: 100%; border-radius: 9999px; }
+  .orbid-mini-pct { font-size: 11px; color: var(--nm-muted-fg); width: 32px; text-align: right; flex-shrink: 0; }
 
   @media (max-width: 700px) {
     .sidebar { width: 64px !important; }
@@ -180,6 +149,7 @@
     .sidebar .sb-item span, .sidebar .sb-chevron { display: none !important; }
     .sidebar .sb-item { justify-content: center; padding: 8px; border-left: none; margin: 1px 4px; }
     .sidebar .sb-section-title { justify-content: center; padding: 6px; }
+    .orbid-meta { margin-left: 0; width: 100%; order: 3; }
   }
 </style>
 </head>
@@ -229,9 +199,9 @@
   <div class="page-head-row">
     <div>
       <div class="page-title">Monitoring</div>
-      <div class="page-sub">Pantau progres penyelesaian assessment per paket dan per kandidat</div>
+      <div class="page-sub">Pantau progres interview, siapa asesor yang menilai, dan status validasi — per batch</div>
     </div>
-    <a href="assignment.html" class="btn btn-outline btn-sm" style="margin-top:4px;text-decoration:none;">+ Assign</a>
+    <a href="assignment.html#asesor" class="btn btn-outline btn-sm" style="margin-top:4px;text-decoration:none;">+ Assign Asesor</a>
   </div>
 </div>
 <main>
@@ -239,7 +209,7 @@
 
   <div class="filter-bar">
     <div class="filter-group">
-      <span class="filter-label">Status Paket</span>
+      <span class="filter-label">Status Batch</span>
       <div class="toggle-group">
         <button class="toggle-btn active" data-filter="" onclick="setFilter(this)">Semua</button>
         <button class="toggle-btn" data-filter="active" onclick="setFilter(this)">Ada Progress</button>
@@ -247,36 +217,24 @@
       </div>
     </div>
     <div class="filter-group">
-      <span class="filter-label">Cari Paket</span>
+      <span class="filter-label">Cari Batch</span>
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="search" id="f-q" placeholder="Nama paket…" oninput="renderMonitoring()">
+        <input type="search" id="b-q" placeholder="Nama batch atau paket…" oninput="renderAll()">
       </div>
     </div>
   </div>
 
-  <div class="tbl-wrap">
-    <div style="overflow-x:auto;">
-      <table>
-        <thead><tr>
-          <th style="width:40px;">#</th>
-          <th>Paket</th>
-          <th>Batch</th>
-          <th>Total Kandidat</th>
-          <th>Completed</th>
-          <th>In Progress</th>
-          <th>Progress Rata-rata</th>
-          <th>Asesor</th>
-          <th style="width:32px;"></th>
-        </tr></thead>
-        <tbody id="tb-monitor"></tbody>
-      </table>
-    </div>
+  <div id="batch-list" style="margin-top:16px;"></div>
+
+  <div style="margin-top:20px;text-align:right;">
+    <button type="button" onclick="resetDemo()" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--nm-muted-fg);font-family:inherit;text-decoration:underline;">Reset data demo</button>
   </div>
 </main>
 </div>
 
 <script src="../competency-data.js"></script>
+<script src="assessor-data.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -322,20 +280,20 @@ function fmtDate(s){if(!s)return'–';const d=new Date(s.includes('T')?s:s+'T00:
 function toggleSidebar(){$('sidebar').classList.toggle('collapsed');}
 function toggleSection(id){const el=$(id),chev=$('chev-'+id);if(!el)return;const h=el.style.display==='none';el.style.display=h?'':'none';if(chev)chev.classList.toggle('open',h);}
 
-/* KPI */
+/* ── KPI ── */
 const KPI_ICONS={
-  paket:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>`,
-  peserta:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  done:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>`,
-  progress:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>`,
+  paket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>',
+  peserta:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  done:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>',
+  progress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>',
 };
 function renderKPI(){
-  const all=ASSIGN_DB.assignments;
-  const paketAktif=new Set(all.map(a=>a.paketId));
+  const all=AD.readCandidates();
+  const batchAktif=AD.batches().length;
   const completed=all.filter(a=>a.status==='Completed').length;
   const inprog=all.filter(a=>['Started','In Progress'].includes(a.status)).length;
   const stats=[
-    {label:'Paket Aktif',n:paketAktif.size,color:'kpi-slate',icon:'paket'},
+    {label:'Batch Aktif',n:batchAktif,color:'kpi-slate',icon:'paket'},
     {label:'Total Peserta',n:all.length,color:'kpi-blue',icon:'peserta'},
     {label:'Selesai',n:completed,color:'kpi-green',icon:'done'},
     {label:'On Progress',n:inprog,color:'kpi-blue',icon:'progress'},
@@ -343,315 +301,183 @@ function renderKPI(){
   $('mon-kpi').innerHTML=stats.map(s=>`<div class="kpi-card ${s.color}"><div class="kpi-inner"><p>${s.label}</p><p>${s.n}</p></div>${KPI_ICONS[s.icon]}</div>`).join('');
 }
 
-/* filter */
+/* ── filter level-batch (Semua/Ada Progress/Selesai + cari) ── */
 let activeFilter='';
-function setFilter(btn){document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeFilter=btn.dataset.filter;renderMonitoring();}
+function setFilter(btn){document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeFilter=btn.dataset.filter;renderAll();}
 
-/* progress bar color */
 function progColor(pct){if(pct===0)return'#f87171';if(pct<50)return'#fbbf24';if(pct<75)return'#60a5fa';return'#34d399';}
 
-/* sub-status */
+/* status interview kandidat (Invited: sudah diundang tapi belum masuk
+   platform interview; Started/In Progress: sedang mengerjakan; Completed: selesai) */
 function subStatus(s){const map={Assigned:'ss-assigned',Invited:'ss-invited',Started:'ss-inprogress','In Progress':'ss-inprogress',Completed:'ss-completed',Expired:'ss-expired',Cancelled:'ss-cancelled'};return`<span class="sub-status ${map[s]||'ss-assigned'}">${esc(s)}</span>`;}
 
-/* expanded rows */
-let expandedId=null;
-
-/* -------- asesor helper -------- */
-const LS_ASESOR='admin_asesor_v1';
+/* status validasi per kandidat */
+const VS_CLASS={[AD.TASK_STATUS.MENUNGGU]:'vs-menunggu',[AD.TASK_STATUS.REVIEW]:'vs-review',[AD.TASK_STATUS.VALIDATED]:'vs-validated',[AD.TASK_STATUS.REVISED]:'vs-revised'};
+function validasiBadge(task){
+  if(!task)return'<span class="sub-status vs-belum">Belum Ditugaskan</span>';
+  return`<span class="sub-status ${VS_CLASS[task.status]||'vs-belum'}">${esc(task.status)}</span>`;
+}
+/* avatar bulat berinisial */
 const AVATARBG=['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
 function avatarBg(name){let h=0;for(const c of(name||''))h=(h*31+c.charCodeAt(0))&0xffffffff;return AVATARBG[Math.abs(h)%AVATARBG.length];}
 function initials(name){const p=(name||'').trim().split(/\s+/);return(p[0]?.[0]||'')+(p[1]?.[0]||'');}
 
-/* dummy progress per asesor per batch (seeded deterministically) */
-function asesorProgress(asesorNama, batchKey, totalKandidats){
-  let h=0;for(const c of(asesorNama+batchKey))h=(h*31+c.charCodeAt(0))&0xffffffff;
-  const rated=Math.abs(h)%( totalKandidats+1);
-  return {rated, total:totalKandidats};
+/* kolom "Asesor" — dipisah dari status validasi biar tabel lebih rapi */
+function asesorCell(task){
+  if(!task)return'<span class="muted">–</span>';
+  return`<div style="display:flex;align-items:center;gap:8px;">
+    <span class="asesor-avatar" style="background:${avatarBg(task.assessorName)};">${esc(initials(task.assessorName))}</span>
+    <span style="font-size:12px;font-weight:600;color:var(--nm-fg);">${esc(task.assessorName)}</span>
+  </div>`;
 }
-function asesorStatusInfo(rated,total){
-  if(total===0)return{label:'–',dotCls:'dot-idle'};
-  if(rated===0)return{label:'Belum Mulai',dotCls:'dot-idle'};
-  if(rated>=total)return{label:'Selesai',dotCls:'dot-done'};
-  return{label:'Menilai',dotCls:'dot-active'};
+const SCORING_BADGE_CLASS={};
+SCORING_BADGE_CLASS[AD.SCORING.BELUM_SIAP]='bd-slate';
+SCORING_BADGE_CLASS[AD.SCORING.BELUM]='bd-slate';
+SCORING_BADGE_CLASS[AD.SCORING.SEDANG]='bd-blue';
+SCORING_BADGE_CLASS[AD.SCORING.SELESAI]='bd-green';
+
+/* progres individual: 0% belum interview, 50% interview selesai tapi
+   belum tervalidasi asesor, 100% sudah tervalidasi/direvisi */
+function personPct(cand,task){
+  if(cand.status!=='Completed')return 0;
+  if(task&&AD.DONE_STATUS.includes(task.status))return 100;
+  return 50;
 }
 
-/* render asesor column chips */
-function renderAsesorCol(asesorList, batchKey, totalCands){
-  if(!asesorList||!asesorList.length)return'<span class="muted" style="font-size:12px;">–</span>';
-  return`<div class="asesor-stack">${asesorList.map(a=>{
-    const {rated,total}=asesorProgress(a.nama,batchKey,totalCands);
-    const {dotCls}=asesorStatusInfo(rated,total);
-    const bg=avatarBg(a.nama);
-    return`<span class="asesor-chip" title="${esc(a.nama)} · ${esc(a.email||'')}">
-      <span class="asesor-avatar" style="background:${bg};">${esc(initials(a.nama))}</span>
-      <span>${esc(a.nama.split(' ')[0])}</span>
-      <span class="asesor-dot ${dotCls}"></span>
-    </span>`;
-  }).join('')}</div>`;
+/* satu baris peserta — dipakai baik oleh render awal (batchCardHtml)
+   maupun render ulang saat search/filter per-kartu (renderCardTable),
+   supaya template-nya tidak dobel dan tidak gampang divergen. */
+function personRowHtml(c,t){
+  const pct=personPct(c,t);
+  return`<tr>
+    <td><b>${esc(c.nama)}</b><br><span class="muted" style="font-size:11px;">${esc(c.email||'–')}</span></td>
+    <td>${subStatus(c.status)}</td>
+    <td>${asesorCell(t)}</td>
+    <td>${validasiBadge(t)}</td>
+    <td>
+      <div class="orbid-mini-prog">
+        <div class="orbid-mini-track"><div class="orbid-mini-fill" style="width:${pct}%;background:${progColor(pct)};"></div></div>
+        <span class="orbid-mini-pct">${pct}%</span>
+      </div>
+    </td>
+  </tr>`;
+}
+function rowsHtmlFor(cands,taskByCand){
+  return cands.length?cands.map(c=>personRowHtml(c,taskByCand[c.id])).join(''):'<tr><td colspan="5" class="empty">Tidak ada peserta yang cocok dengan filter.</td></tr>';
 }
 
-/* render expanded asesor mini-table */
-function renderAsesorMiniTable(asesorList, batchKey, totalCands, paketId){
-  if(!asesorList||!asesorList.length)return`<div style="font-size:12px;color:var(--nm-muted-fg);padding:8px 12px;">Belum ada asesor ditambahkan.</div>`;
-  return`<div style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:12px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-bottom:1px solid var(--nm-border);">
-      <span style="font-size:11px;font-weight:600;color:#374151;">Asesor Batch</span>
-      <button class="btn btn-sm btn-outline" style="font-size:11px;padding:3px 10px;" onclick="openKelola('${esc(paketId)}');event.stopPropagation();">✏️ Kelola Asesor</button>
+/* ── per-kartu: pencarian & filter status peserta (state per batchId) ── */
+let expanded=new Set();
+const cardFilters={};
+
+function toggleBatch(id){
+  if(expanded.has(id))expanded.delete(id);else expanded.add(id);
+  renderAll();
+}
+
+function cardRows(r){
+  const taskByCand={};
+  r.tasks.forEach(t=>{taskByCand[t.candidateId]=t;});
+  const f=cardFilters[r.id]||{q:'',status:''};
+  let cands=r.candidates;
+  if(f.q){
+    const q=f.q.toLowerCase();
+    cands=cands.filter(c=>c.nama.toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q));
+  }
+  if(f.status){
+    cands=cands.filter(c=>{
+      const t=taskByCand[c.id];
+      return(t?t.status:'Belum Ditugaskan')===f.status;
+    });
+  }
+  return{taskByCand,cands,f};
+}
+
+function renderCardTable(r){
+  const{taskByCand,cands}=cardRows(r);
+  const cnt=$('cnt-'+r.id), tbl=$('tbl-'+r.id);
+  if(!cnt||!tbl)return;
+  cnt.textContent=`Peserta — ${cands.length} ditampilkan`;
+  tbl.innerHTML=rowsHtmlFor(cands,taskByCand);
+}
+
+function setCardSearch(id,val){cardFilters[id]=Object.assign({},cardFilters[id]||{},{q:val});const r=AD.batchRows().find(x=>x.id===id);if(r)renderCardTable(r);}
+function setCardStatusFilter(id,val){cardFilters[id]=Object.assign({},cardFilters[id]||{},{status:val});const r=AD.batchRows().find(x=>x.id===id);if(r)renderCardTable(r);}
+
+function batchCardHtml(r){
+  const isOpen=expanded.has(r.id);
+  const badgeCls=SCORING_BADGE_CLASS[r.scoringStatus]||'bd-slate';
+  const{taskByCand,cands,f}=cardRows(r);
+
+  // progres keseluruhan batch = kandidat yang sudah TUNTAS end-to-end
+  // (interview selesai + tervalidasi/direvisi) dibagi total kandidat.
+  const overallDone=r.candidates.filter(c=>{const t=taskByCand[c.id];return t&&AD.DONE_STATUS.includes(t.status);}).length;
+  const overallPct=r.total?Math.round(overallDone/r.total*100):0;
+
+  const rowsHtml=rowsHtmlFor(cands,taskByCand);
+
+  const STATUS_OPTS=['','Belum Ditugaskan',AD.TASK_STATUS.MENUNGGU,AD.TASK_STATUS.REVIEW,AD.TASK_STATUS.VALIDATED,AD.TASK_STATUS.REVISED];
+
+  return`<div class="orbid-batch">
+    <div class="orbid-head" onclick="toggleBatch('${jsq(r.id)}')">
+      <span class="orbid-chevron ${isOpen?'open':''}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span>
+      <span class="orbid-name">${esc(r.batchName)}</span>
+      <span class="status-badge ${badgeCls}">${esc(r.scoringStatus)}</span>
+      <span class="orbid-meta">${esc(AD.fmtDate(r.periodStart))} – ${esc(AD.fmtDate(r.periodEnd))} · ${r.total} peserta</span>
+      <div class="orbid-progress">
+        <div class="orbid-progress-track"><div class="orbid-progress-fill" style="width:${overallPct}%;background:${progColor(overallPct)};"></div></div>
+        <span class="orbid-progress-pct">${overallPct}%</span>
+      </div>
     </div>
-    ${asesorList.map(a=>{
-      const {rated,total}=asesorProgress(a.nama,batchKey,totalCands);
-      const {label,dotCls}=asesorStatusInfo(rated,total);
-      const bg=avatarBg(a.nama);
-      const pct=total?Math.round(rated/total*100):0;
-      return`<div class="asesor-status-row">
-        <div class="asesor-status-info">
-          <span class="asesor-avatar" style="background:${bg};width:28px;height:28px;font-size:11px;">${esc(initials(a.nama))}</span>
-          <div>
-            <div style="font-size:13px;font-weight:500;">${esc(a.nama)}</div>
-            <div style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||'–')}</div>
-          </div>
+    <div class="orbid-body" ${isOpen?'':'hidden'}>
+      <div class="orbid-toolbar">
+        <span class="orbid-toolbar-count" id="cnt-${r.id}">Peserta — ${cands.length} ditampilkan</span>
+        <select class="orbid-select" onchange="setCardStatusFilter('${jsq(r.id)}', this.value)">
+          ${STATUS_OPTS.map(s=>`<option value="${esc(s)}" ${f.status===s?'selected':''}>${s?esc(s):'Semua status'}</option>`).join('')}
+        </select>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" placeholder="Cari nama…" value="${esc(f.q)}" oninput="setCardSearch('${jsq(r.id)}', this.value)">
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="text-align:right;">
-            <div style="display:flex;align-items:center;gap:5px;"><span class="asesor-dot ${dotCls}"></span><span style="font-size:12px;color:#374151;">${esc(label)}</span></div>
-            <div style="font-size:11px;color:var(--nm-muted-fg);">${rated}/${total} peserta</div>
-          </div>
-          <div class="prog-bar" style="width:80px;">
-            <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${progColor(pct)};"></div></div>
-          </div>
-        </div>
-      </div>`;
-    }).join('')}
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="orbid-table">
+          <thead><tr><th>Peserta</th><th>Interview</th><th>Asesor</th><th>Status Validasi</th><th>Progres</th></tr></thead>
+          <tbody id="tbl-${r.id}">${rowsHtml}</tbody>
+        </table>
+      </div>
+    </div>
   </div>`;
 }
 
-function renderMonitoring(){
-  const fq=($('f-q').value||'').toLowerCase();
-  const paketMap={};
-  ASSIGN_DB.assignments.forEach(a=>{
-    if(!paketMap[a.paketId])paketMap[a.paketId]=[];
-    paketMap[a.paketId].push(a);
-  });
-  let rows=DB.paket.filter(p=>paketMap[p.id]&&paketMap[p.id].length>0);
-  if(fq)rows=rows.filter(p=>p.nama.toLowerCase().includes(fq));
-  if(activeFilter==='active')rows=rows.filter(p=>{const cands=paketMap[p.id]||[];return cands.some(a=>!['Completed','Expired','Cancelled'].includes(a.status));});
-  if(activeFilter==='done')rows=rows.filter(p=>{const cands=paketMap[p.id]||[];return cands.length>0&&cands.every(a=>a.status==='Completed');});
+function renderAll(){
+  const bq=($('b-q').value||'').toLowerCase();
+  let rows=AD.batchRows();
+  if(bq)rows=rows.filter(r=>r.batchName.toLowerCase().includes(bq)||r.paketName.toLowerCase().includes(bq));
+  if(activeFilter==='active')rows=rows.filter(r=>r.candidates.some(a=>!['Completed','Expired','Cancelled'].includes(a.status)));
+  if(activeFilter==='done')rows=rows.filter(r=>r.candidates.length>0&&r.candidates.every(a=>a.status==='Completed'));
 
-  if(!rows.length&&!ASSIGN_DB.assignments.length){
-    $('tb-monitor').innerHTML=`<tr><td colspan="9" style="padding:0;"><div class="empty-state"><div class="empty-state-icon">📊</div><h2>Belum ada data monitoring</h2><p>Buat assignment terlebih dahulu untuk mulai memantau progres.</p><a href="assignment.html" class="btn btn-primary btn-sm" style="text-decoration:none;">+ Buat Assignment</a></div></td></tr>`;return;
+  const list=$('batch-list');
+  if(!rows.length&&!AD.readCandidates().length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📊</div><h2>Belum ada data monitoring</h2><p>Buat assignment terlebih dahulu untuk mulai memantau progres.</p><a href="assignment.html" class="btn btn-primary btn-sm" style="text-decoration:none;">+ Buat Assignment</a></div>`;
+    return;
   }
-  if(!rows.length){$('tb-monitor').innerHTML=`<tr><td colspan="9" class="empty">Tidak ada paket ditemukan.</td></tr>`;return;}
-
-  $('tb-monitor').innerHTML=rows.map((p,i)=>{
-    const cands=paketMap[p.id]||[];
-    const total=cands.length;
-    const done=cands.filter(a=>a.status==='Completed').length;
-    const inprog=cands.filter(a=>['Started','In Progress'].includes(a.status)).length;
-    const pct=total?Math.round((done/total)*100):0;
-    const isExp=expandedId===p.id;
-
-    // batch grouping
-    const batchGroups={};
-    cands.forEach(a=>{const k=a.batchName||'(tanpa batch)';if(!batchGroups[k])batchGroups[k]={asesor:a.asesor||[],cands:[]};batchGroups[k].cands.push(a);});
-
-    // collect all unique asesor across all batches (deduped by email)
-    const asesorByEmail={};
-    Object.entries(batchGroups).forEach(([bName,bg])=>{
-      bg.asesor.forEach(a=>{
-        if(!asesorByEmail[a.email]){asesorByEmail[a.email]={...a,batches:[{bName,totalCands:bg.cands.length}]};}
-        else{asesorByEmail[a.email].batches.push({bName,totalCands:bg.cands.length});}
-      });
-    });
-    const allAsesor=Object.values(asesorByEmail);
-
-    const batches=[...new Set(cands.map(a=>a.batchName).filter(Boolean))];
-    const batchCell=batches.length?batches.map(b=>`<span style="display:block;font-size:12px;line-height:1.5;">${esc(b)}</span>`).join(''):'<span class="muted">–</span>';
-
-    const subRows=cands.map(a=>`<tr><td style="padding:10px 12px;">${esc(a.nama)}<br><span style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||a.wa||'–')}</span></td><td>${subStatus(a.status)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.deadline)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.updatedAt||a.createdAt)}</td></tr>`).join('');
-
-    const expandedAsesor=Object.entries(batchGroups).map(([bName,bg])=>renderAsesorMiniTable(bg.asesor,bName,bg.cands.length,p.id)).join('');
-
-    // render column: all unique asesor, aggregate progress across their batches
-    const colAsesorHtml=(()=>{
-      if(!allAsesor.length)return'<span class="muted" style="font-size:12px;">–</span>';
-      return`<div class="asesor-stack">${allAsesor.map(a=>{
-        const totalRated=a.batches.reduce((s,b)=>s+asesorProgress(a.nama,b.bName,b.totalCands).rated,0);
-        const totalAll=a.batches.reduce((s,b)=>s+b.totalCands,0);
-        const {dotCls}=asesorStatusInfo(totalRated,totalAll);
-        const bg=avatarBg(a.nama);
-        return`<span class="asesor-chip" title="${esc(a.nama)} · ${esc(a.email||'')}">
-          <span class="asesor-avatar" style="background:${bg};">${esc(initials(a.nama))}</span>
-          <span>${esc(a.nama.split(' ')[0])}</span>
-          <span class="asesor-dot ${dotCls}"></span>
-        </span>`;
-      }).join('')}</div>`;
-    })();
-
-    return`<tr class="expand-trigger" onclick="toggleRow('${p.id}')">
-      <td class="muted">${i+1}</td>
-      <td><b>${esc(p.nama)}</b></td>
-      <td>${batchCell}</td>
-      <td>${total}</td>
-      <td>${done} <span class="muted">(${pct}%)</span></td>
-      <td>${inprog}</td>
-      <td>
-        <div class="prog-bar">
-          <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${progColor(pct)};"></div></div>
-          <span class="prog-pct">${pct}%</span>
-        </div>
-      </td>
-      <td onclick="event.stopPropagation();">${colAsesorHtml}</td>
-      <td><span class="chevron ${isExp?'open':''}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></td>
-    </tr>
-    <tr class="expand-row"><td colspan="9"><div class="expand-inner ${isExp?'open':''}">
-      <div class="expand-content">
-        ${expandedAsesor}
-        <table class="sub-table"><thead><tr><th>Kandidat</th><th>Status</th><th>Deadline</th><th>Update Terakhir</th></tr></thead>
-        <tbody>${subRows}</tbody></table>
-      </div>
-    </div></td></tr>`;
-  }).join('');
-}
-
-function toggleRow(id){expandedId=expandedId===id?null:id;renderMonitoring();}
-
-/* -------- Modal Kelola Asesor -------- */
-let kelolapaketId=null;
-let kelolaAsesorList=[];
-let ddIdx=-1;
-
-function openKelola(paketId){
-  kelolapaketId=paketId;
-  const paketMap={};
-  ASSIGN_DB.assignments.forEach(a=>{if(!paketMap[a.paketId])paketMap[a.paketId]=[];paketMap[a.paketId].push(a);});
-  const cands=paketMap[paketId]||[];
-  kelolaAsesorList=JSON.parse(JSON.stringify((cands[0]&&cands[0].asesor)||[]));
-  renderKelolaModal();
-  $('modal-kelola').style.display='flex';
-}
-function closeKelola(){$('modal-kelola').style.display='none';}
-
-function renderKelolaModal(){
-  const totalCands=(()=>{const pm={};ASSIGN_DB.assignments.forEach(a=>{if(!pm[a.paketId])pm[a.paketId]=[];pm[a.paketId].push(a);});return(pm[kelolapaketId]||[]).length;})();
-  const firstBatch=(()=>{const pm={};ASSIGN_DB.assignments.forEach(a=>{if(!pm[a.paketId])pm[a.paketId]=a.batchName||'';});return pm[kelolapaketId]||'';})();
-  const listHtml=kelolaAsesorList.length?kelolaAsesorList.map((a,idx)=>{
-    const {rated,total}=asesorProgress(a.nama,firstBatch,totalCands);
-    const {label,dotCls}=asesorStatusInfo(rated,total);
-    const bg=avatarBg(a.nama);
-    return`<div class="asesor-status-row">
-      <div class="asesor-status-info">
-        <span class="asesor-avatar" style="background:${bg};width:28px;height:28px;font-size:11px;">${esc(initials(a.nama))}</span>
-        <div>
-          <div style="font-size:13px;font-weight:500;">${esc(a.nama)}</div>
-          <div style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||'–')}</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="display:flex;align-items:center;gap:5px;"><span class="asesor-dot ${dotCls}"></span><span style="font-size:12px;">${esc(label)}</span></div>
-        <button class="asesor-remove-btn" onclick="removeKelolaAsesor(${idx})" title="Hapus">×</button>
-      </div>
-    </div>`;
-  }).join(''):`<div style="padding:16px;text-align:center;color:var(--nm-muted-fg);font-size:13px;">Belum ada asesor.</div>`;
-  $('kelola-asesor-list').innerHTML=listHtml;
-}
-
-function removeKelolaAsesor(idx){kelolaAsesorList.splice(idx,1);renderKelolaModal();}
-
-function kelolaAddAsesor(){
-  const nama=$('k-aNama').value.trim();
-  const email=$('k-aEmail').value.trim().toLowerCase();
-  if(!nama||!email){showToast('Isi nama dan email asesor');return;}
-  if(kelolaAsesorList.some(a=>a.email===email)){showToast('Asesor sudah ada');return;}
-  kelolaAsesorList.push({nama,email});
-  $('k-aNama').value='';$('k-aEmail').value='';
-  $('k-asesorDd').style.display='none';
-  renderKelolaModal();
-  saveAsesorHistoryKelola(nama,email);
-}
-
-function saveAsesorHistoryKelola(nama,email){
-  let hist=[];try{hist=JSON.parse(localStorage.getItem(LS_ASESOR))||[];}catch{}
-  hist=hist.filter(h=>h.email!==email);
-  hist.unshift({nama,email});
-  if(hist.length>50)hist=hist.slice(0,50);
-  localStorage.setItem(LS_ASESOR,JSON.stringify(hist));
-}
-
-function showKelolaDropdown(){
-  const q=$('k-aNama').value.toLowerCase();
-  let hist=[];try{hist=JSON.parse(localStorage.getItem(LS_ASESOR))||[];}catch{}
-  const filtered=hist.filter(h=>(!q||h.nama.toLowerCase().includes(q)||h.email.toLowerCase().includes(q))&&!kelolaAsesorList.some(a=>a.email===h.email));
-  const dd=$('k-asesorDd');
-  if(!filtered.length){dd.style.display='none';return;}
-  dd.innerHTML=filtered.map((h,i)=>`<div class="asesor-combo-item" onmousedown="pickKelolaAsesor('${esc(h.nama)}','${esc(h.email)}')">${esc(h.nama)}<small>${esc(h.email)}</small></div>`).join('');
-  dd.style.display='block';
-  ddIdx=-1;
-}
-function pickKelolaAsesor(nama,email){$('k-aNama').value=nama;$('k-aEmail').value=email;$('k-asesorDd').style.display='none';kelolaAddAsesor();}
-function handleKelolaKey(e){
-  const dd=$('k-asesorDd');const items=dd.querySelectorAll('.asesor-combo-item');
-  if(e.key==='ArrowDown'){e.preventDefault();ddIdx=Math.min(ddIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('active-dd',i===ddIdx));}
-  else if(e.key==='ArrowUp'){e.preventDefault();ddIdx=Math.max(ddIdx-1,0);items.forEach((el,i)=>el.classList.toggle('active-dd',i===ddIdx));}
-  else if(e.key==='Enter'){e.preventDefault();if(ddIdx>=0&&items[ddIdx]){items[ddIdx].dispatchEvent(new MouseEvent('mousedown'));}else kelolaAddAsesor();}
-  else if(e.key==='Escape'){dd.style.display='none';}
-}
-
-function saveKelola(){
-  if(!kelolaAsesorList.length){showToast('Minimal 1 asesor');return;}
-  // update all records for this paket
-  ASSIGN_DB.assignments.forEach(a=>{if(a.paketId===kelolapaketId)a.asesor=JSON.parse(JSON.stringify(kelolaAsesorList));});
-  // materialize to localStorage
-  if(!localStorage.getItem(LS_ASSIGN)||JSON.parse(localStorage.getItem(LS_ASSIGN)).assignments.length===0){
-    localStorage.setItem(LS_ASSIGN,JSON.stringify(ASSIGN_DB));
-  }else{
-    const stored=JSON.parse(localStorage.getItem(LS_ASSIGN));
-    stored.assignments.forEach(a=>{if(a.paketId===kelolapaketId)a.asesor=JSON.parse(JSON.stringify(kelolaAsesorList));});
-    localStorage.setItem(LS_ASSIGN,JSON.stringify(stored));
+  if(!rows.length){
+    list.innerHTML=`<div class="empty" style="border:1px solid var(--nm-border);border-radius:var(--nm-radius);background:#fff;">Tidak ada batch ditemukan.</div>`;
+    return;
   }
-  closeKelola();renderMonitoring();showToast('Asesor berhasil diperbarui');
+  list.innerHTML=rows.map(r=>batchCardHtml(r)).join('');
 }
 
-/* toast */
+/* toast + reset demo */
 function showToast(msg){
   let t=$('toast-msg');
   if(!t){t=document.createElement('div');t.id='toast-msg';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;pointer-events:none;';document.body.appendChild(t);}
   t.textContent=msg;t.style.opacity='1';clearTimeout(t._to);t._to=setTimeout(()=>{t.style.opacity='0';},2000);
 }
+function resetDemo(){AD.resetDemo();AD.ensureData();expanded.clear();renderKPI();renderAll();showToast('Data demo direset');}
 
-loadDB();loadAssign();renderKPI();renderMonitoring();
+AD.ensureData();renderKPI();renderAll();
 </script>
-
-<!-- Modal Kelola Asesor -->
-<div id="modal-kelola" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeKelola()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>Kelola Asesor</h3>
-      <button class="modal-close" onclick="closeKelola()">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--nm-muted-fg);margin:0 0 12px;">Asesor yang bertugas menilai kandidat dalam batch ini.</p>
-      <div id="kelola-asesor-list" style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:16px;"></div>
-      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;">Tambah Asesor</div>
-      <div class="asesor-add-row">
-        <div class="f-group">
-          <label class="f-label">Nama Asesor</label>
-          <input id="k-aNama" class="f-input" type="text" placeholder="Nama lengkap" autocomplete="off"
-            oninput="showKelolaDropdown()" onfocus="showKelolaDropdown()" onkeydown="handleKelolaKey(event)" onblur="setTimeout(()=>{$('k-asesorDd').style.display='none';},150)">
-          <div id="k-asesorDd" class="asesor-combo-dd" style="display:none;"></div>
-        </div>
-        <div class="f-group">
-          <label class="f-label">Email</label>
-          <input id="k-aEmail" class="f-input" type="email" placeholder="email@domain.com"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();kelolaAddAsesor();}">
-        </div>
-        <button class="btn-add-asesor" type="button" onclick="kelolaAddAsesor()">+ Tambah</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeKelola()">Batal</button>
-      <button class="btn btn-primary" onclick="saveKelola()">Simpan Perubahan</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
