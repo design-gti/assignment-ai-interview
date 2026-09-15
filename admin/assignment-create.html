@@ -35,6 +35,7 @@
   .sb-section:first-child{border-top:none;margin-top:0;}
   .sb-section-title{padding:4px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:color .15s;}
   .sb-section-title.dim-sect{color:#334155;}
+  .sb-section-title.idle-sect{color:#64748b;}
   .sb-section-title.active-sect{color:#60a5fa;}
   .sb-section-dot{width:6px;height:6px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:5px;}
   .sb-chevron{font-size:10px;transition:transform .2s;}
@@ -170,6 +171,10 @@
           <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>Item Management</span>
         </a>
+        <a href="item-management.html#paket" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Paket Interview</span>
+        </a>
         <a href="assignment.html" class="sb-item active-section">
           <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>Assignment</span>
@@ -177,6 +182,18 @@
         <a href="monitoring.html" class="sb-item">
           <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           <span>Monitoring</span>
+        </a>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title idle-sect" onclick="toggleSection(this)">
+        <span><span class="sb-section-dot"></span>Validasi Asesor</span>
+        <span class="sb-chevron open">▶</span>
+      </div>
+      <div class="sb-items">
+        <a href="assessor-assignment.html" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+          <span>Assignment Asesor</span>
         </a>
       </div>
     </div>

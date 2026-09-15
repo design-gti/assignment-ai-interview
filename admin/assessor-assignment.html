@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assignment Asesor — Admin · Talentlytica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  :root {
+    --nm-bg:#ffffff;--nm-fg:#0f172a;--nm-card:#ffffff;
+    --nm-border:#e2e8f0;--nm-muted:#f8fafc;--nm-muted-fg:#64748b;
+    --nm-input:#e2e8f0;--nm-radius:0.625rem;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  html,body{height:100%;margin:0;}
+  body{background:#f1f5f9;font-family:'Inter',sans-serif;display:flex;height:100vh;overflow:hidden;color:var(--nm-fg);}
+
+  /* ── Sidebar ── */
+  .sidebar{width:240px;flex-shrink:0;background:#0f172a;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:width .25s;}
+  .sidebar.collapsed{width:64px;}
+  .sb-header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
+  .sb-logo{display:flex;align-items:center;gap:10px;}
+  .sb-logo-icon{width:32px;height:32px;flex-shrink:0;border-radius:8px;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+  .sb-logo-text .t1{font-size:12px;font-weight:700;line-height:1.2;white-space:nowrap;}
+  .sb-logo-text .t2{font-size:10px;color:#94a3b8;white-space:nowrap;}
+  .sb-collapse-btn{width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:#94a3b8;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;}
+  .sb-collapse-btn:hover{background:#1e293b;color:#fff;}
+  .sb-nav{flex:1;overflow-y:auto;padding:8px 0;}
+  .sb-nav::-webkit-scrollbar{width:4px;}
+  .sb-nav::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;}
+  .sb-section{border-top:1px solid rgba(255,255,255,.06);padding-top:6px;margin-top:4px;}
+  .sb-section:first-child{border-top:none;margin-top:0;}
+  .sb-section-title{padding:4px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:color .15s;}
+  .sb-section-title.idle-sect{color:#64748b;}
+  .sb-section-title.dim-sect{color:#334155;}
+  .sb-section-title.active-sect{color:#60a5fa;}
+  .sb-section-dot{width:6px;height:6px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:5px;}
+  .sb-chevron{font-size:10px;transition:transform .2s;}
+  .sb-chevron.open{transform:rotate(90deg);}
+  .sb-items{overflow:hidden;}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:7px 12px 7px 14px;font-size:12px;font-weight:500;cursor:pointer;border-radius:6px;margin:1px 6px;border-left:2px solid transparent;transition:background .12s,color .12s;text-decoration:none;white-space:nowrap;overflow:hidden;color:#94a3b8;background:none;border-top:none;border-right:none;border-bottom:none;font-family:inherit;width:calc(100% - 12px);text-align:left;}
+  .sb-item .sb-icon{font-size:15px;flex-shrink:0;opacity:.7;}
+  .sb-item.active-section{background:#3b82f6;color:#fff;border-left-color:transparent;}
+  .sb-item.active-section .sb-icon{opacity:1;}
+  .sb-item.dim-link{color:#334155;cursor:default;}
+  .sb-item:not(.dim-link):not(.active-section):hover{background:#1e293b;color:#e2e8f0;}
+  .sidebar.collapsed .sb-logo-text,.sidebar.collapsed .sb-section-title span:not(.sb-section-dot),.sidebar.collapsed .sb-item span,.sidebar.collapsed .sb-chevron{display:none;}
+  .sidebar.collapsed .sb-item{justify-content:center;padding:8px;border-left:none;margin:1px 4px;}
+  .sidebar.collapsed .sb-section-title{justify-content:center;padding:6px;}
+  .sb-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,.1);font-size:10px;color:#334155;flex-shrink:0;}
+
+  /* ── Main ── */
+  .main-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
+  .page-head{padding:28px 28px 0;max-width:1080px;}
+  .page-head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+  .page-title{font-size:22px;font-weight:700;color:var(--nm-fg);}
+  .page-sub{font-size:13px;color:var(--nm-muted-fg);margin-top:4px;}
+  main{padding:18px 28px 64px;max-width:1080px;}
+
+  /* ── Card ── */
+  .card{background:#fff;border:1px solid var(--nm-border);border-radius:var(--nm-radius);padding:22px 24px;margin-bottom:16px;transition:opacity .2s;}
+  .card.step-locked{opacity:.5;pointer-events:none;}
+  .card-title{font-size:14px;font-weight:700;color:var(--nm-fg);display:flex;align-items:center;gap:9px;}
+  .card-title svg{color:#3b82f6;flex-shrink:0;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .card.step-locked .step-num{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0;}
+  .card-title .ct-sub{font-size:12px;font-weight:500;color:var(--nm-muted-fg);margin-left:auto;text-align:right;}
+  .card-note{font-size:12px;color:var(--nm-muted-fg);margin-top:8px;line-height:1.55;}
+  .section-divider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--nm-border);}
+
+  /* ── Toolbar dalam card ── */
+  .card-tools{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:16px 0 14px;}
+  .toggle-group{display:flex;border:1px solid var(--nm-border);border-radius:6px;overflow:hidden;}
+  .toggle-btn{padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#334155;border:none;font-family:inherit;transition:background .15s,color .15s;}
+  .toggle-btn.active{background:#0f172a;color:#fff;}
+  .toggle-btn:hover:not(.active){background:#f1f5f9;}
+  .search-wrap{position:relative;}
+  .search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--nm-muted-fg);pointer-events:none;}
+  .search-wrap input{padding:7px 10px 7px 28px;border-radius:6px;border:1px solid var(--nm-border);font-family:inherit;font-size:13px;background:var(--nm-bg);color:var(--nm-fg);width:220px;}
+  .search-wrap input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+  .tool-count{font-size:12px;color:var(--nm-muted-fg);}
+  .tool-count b{color:var(--nm-fg);}
+  .chk-label{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;user-select:none;}
+  input[type=checkbox]{accent-color:#3b82f6;width:15px;height:15px;cursor:pointer;margin:0;}
+  input[type=checkbox]:disabled{cursor:not-allowed;}
+
+  /* ── Kartu pilihan batch ── */
+  .pick-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media (max-width:1000px){.pick-list{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:700px){.pick-list{grid-template-columns:1fr;}}
+  /* dalam grid, dorong statistik + progress bar ke dasar kartu supaya
+     kartu sebaris rata bawah meski nama batch memakan jumlah baris berbeda */
+  .pick-list .pick-stats{margin-top:auto;padding-top:10px;}
+  /* kartu grid jauh lebih sempit daripada baris penuh: badge dinaikkan ke
+     barisnya sendiri, kalau tidak nama batch terhimpit sampai pecah per kata */
+  .pick-list .pick-top{flex-direction:column;align-items:flex-start;gap:7px;}
+  .pick-list .pick-top .status-badge{order:-1;}
+  .pick-card{display:flex;flex-direction:column;width:100%;text-align:left;font-family:inherit;background:#fff;border:1px solid var(--nm-border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;}
+  .pick-card:not(.dis):not(:disabled):hover{border-color:#93c5fd;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+  .pick-card.sel{border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
+  .pick-card:disabled,.pick-card.dis{opacity:.6;cursor:not-allowed;background:var(--nm-muted);}
+  .pick-card.dis.sel{opacity:1;border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
+  .review-link{background:none;border:none;padding:0;margin-top:9px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#3b82f6;cursor:pointer;text-decoration:underline;}
+  .review-link:hover{color:#2563eb;}
+  .pick-card:focus-visible{outline:2px solid #93c5fd;outline-offset:1px;}
+  .pick-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .pick-name{font-size:13px;font-weight:700;color:var(--nm-fg);line-height:1.35;}
+  .pick-meta{font-size:11px;color:var(--nm-muted-fg);margin-top:3px;}
+  .pick-stats{font-size:11px;color:#475569;margin-top:10px;line-height:1.5;}
+  .pick-reason{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px 9px;margin-top:10px;}
+  .pick-reason svg{flex-shrink:0;margin-top:1px;color:#d97706;}
+
+  /* ── Badge ── */
+  .status-badge{display:inline-flex;align-items:center;gap:5px;border-radius:9999px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
+  .bd-green{background:#d1fae5;color:#065f46;border-color:#6ee7b7;}
+  .bd-amber{background:#fef3c7;color:#92400e;border-color:#fcd34d;}
+  .bd-slate{background:#f1f5f9;color:#64748b;border-color:#cbd5e1;}
+  .bd-blue{background:#dbeafe;color:#1e40af;border-color:#93c5fd;}
+  .bd-red{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+
+  /* ── Progress bar ── */
+  .prog-bar{display:flex;align-items:center;gap:8px;min-width:120px;}
+  .prog-track{flex:1;height:6px;background:#e2e8f0;border-radius:9999px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:9999px;transition:width .3s;}
+  .prog-pct{font-size:11px;color:var(--nm-muted-fg);width:34px;text-align:right;flex-shrink:0;}
+
+  /* ── Tabel ── */
+  .tbl-wrap{border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;}
+  .tbl-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;padding:9px 14px;font-size:11px;font-weight:500;color:var(--nm-muted-fg);border-bottom:1px solid var(--nm-border);background:#f8fafc;white-space:nowrap;}
+  td{padding:11px 14px;border-bottom:1px solid var(--nm-border);vertical-align:middle;}
+  tr:last-child td{border-bottom:0;}
+  tbody tr.row-dim{background:var(--nm-muted);}
+  tbody tr.row-dim td{color:#94a3b8;}
+  tbody tr.row-dim .cell-name{color:#94a3b8;font-weight:500;}
+  tbody tr.row-dim .status-badge{opacity:.7;}
+  .cell-name{font-weight:600;color:var(--nm-fg);}
+  .cell-sub{font-size:11px;color:var(--nm-muted-fg);margin-top:2px;}
+  .cell-nowrap{white-space:nowrap;}
+  #cand-tbody td,#grp-tbody td{padding-top:10px;padding-bottom:10px;}
+  .tbl-scroll table{min-width:760px;}
+  .muted{color:var(--nm-muted-fg);}
+  .empty{text-align:center;color:var(--nm-muted-fg);padding:32px 14px;font-size:13px;}
+
+  /* ── Form ── */
+  .f-row{display:grid;gap:16px;}
+  .f-row.cols-2{grid-template-columns:1fr 1fr;}
+  @media (max-width:700px){.f-row.cols-2{grid-template-columns:1fr;}}
+  .f-group{display:flex;flex-direction:column;gap:5px;}
+  .f-label{font-size:12px;font-weight:600;color:#374151;}
+  .f-label span{color:#94a3b8;font-weight:400;}
+  .f-input,.f-textarea{width:100%;padding:8px 10px;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--nm-fg);background:#fff;transition:border-color .15s,box-shadow .15s;outline:none;}
+  .f-input:focus,.f-textarea:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+  .f-textarea{min-height:74px;resize:vertical;line-height:1.5;}
+  .f-hint{font-size:11px;color:var(--nm-muted-fg);margin-top:8px;}
+  .f-hint.bad{color:#b91c1c;font-weight:600;}
+
+  /* ── Empty state ── */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:44px 24px;border:1px dashed var(--nm-border);border-radius:8px;text-align:center;}
+  .empty-state-icon{font-size:32px;}
+  .empty-state h2{font-size:14px;font-weight:600;color:var(--nm-fg);margin:0;}
+  .empty-state p{font-size:12px;color:var(--nm-muted-fg);margin:0;max-width:340px;line-height:1.55;}
+
+  /* ── Ringkasan + aksi ── */
+  .sum-card{background:#fff;border:1px solid var(--nm-border);border-top:3px solid #3b82f6;border-radius:var(--nm-radius);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+  .sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;}
+  .sum-text{font-size:13px;font-weight:600;color:var(--nm-fg);margin-top:5px;line-height:1.5;}
+  .sum-text.incomplete{font-weight:500;color:var(--nm-muted-fg);}
+  .sum-actions{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .btn-cancel{padding:9px 18px;background:#fff;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-cancel:hover{border-color:#94a3b8;}
+  .btn-submit{padding:9px 22px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-submit:hover:not(:disabled){background:#2563eb;}
+  .btn-submit:disabled{background:#cbd5e1;color:#f8fafc;cursor:not-allowed;}
+  .btn-outline-sm{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--nm-border);background:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:#374151;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;}
+  .btn-outline-sm:hover{border-color:#3b82f6;color:#3b82f6;}
+  .btn-row-danger{background:none;border:1px solid var(--nm-border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-row-danger:hover{border-color:#fca5a5;background:#fee2e2;color:#b91c1c;}
+  .link-sm{display:inline-block;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:500;}
+  .link-sm:hover{text-decoration:underline;}
+  .link-btn{background:none;border:none;padding:0;font-family:'Inter',sans-serif;font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline;}
+  .link-btn:hover{color:#64748b;}
+  .foot-row{margin-top:26px;padding-top:14px;border-top:1px solid var(--nm-border);}
+
+  /* ── Toast ── */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:13px;padding:10px 20px;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.2);z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;max-width:80vw;text-align:center;}
+  #toast.show{opacity:1;}
+
+  @media (max-width:700px){
+    .sidebar{width:64px !important;}
+    .sidebar .sb-logo-text,.sidebar .sb-section-title span:not(.sb-section-dot),
+    .sidebar .sb-item span,.sidebar .sb-chevron{display:none !important;}
+    .sidebar .sb-item{justify-content:center;padding:8px;border-left:none;margin:1px 4px;}
+    .sidebar .sb-section-title{justify-content:center;padding:6px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">T</div>
+      <div class="sb-logo-text"><div class="t1">Talentlytica</div><div class="t2">Admin Panel</div></div>
+    </div>
+    <button class="sb-collapse-btn" onclick="toggleSidebar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">
+      <div class="sb-section-title idle-sect" onclick="toggleSection(this)">
+        <span><span class="sb-section-dot"></span>Assessment</span>
+        <span class="sb-chevron open">▶</span>
+      </div>
+      <div class="sb-items">
+        <a href="item-management.html" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Item Management</span>
+        </a>
+        <a href="item-management.html#paket" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Paket Interview</span>
+        </a>
+        <a href="assignment.html" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Assignment</span>
+        </a>
+        <a href="monitoring.html" class="sb-item">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Monitoring</span>
+        </a>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-title active-sect" onclick="toggleSection(this)">
+        <span><span class="sb-section-dot"></span>Validasi Asesor</span>
+        <span class="sb-chevron open">▶</span>
+      </div>
+      <div class="sb-items">
+        <a href="assessor-assignment.html" class="sb-item active-section">
+          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+          <span>Assignment Asesor</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+  <div class="sb-footer">v0.4 · prototype</div>
+</aside>
+
+<!-- Main -->
+<div class="main-area">
+  <div class="page-head">
+    <div class="page-head-row">
+      <div>
+        <div class="page-title">Assignment Asesor</div>
+        <div class="page-sub">Tugaskan validasi hasil interview AI ke asesor beserta periode SLA</div>
+      </div>
+      <a href="monitoring.html" class="btn-outline-sm" style="margin-top:4px;">Monitoring →</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ─── 1 · Pilih Batch ─── -->
+    <div class="card" id="card1">
+      <div class="card-title">
+        <span class="step-num">1</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Pilih Batch
+      </div>
+      <div class="card-note">
+        Penugasan ke asesor hanya bisa dilakukan untuk batch yang kandidatnya sudah menyelesaikan interview
+        <b>dan</b> report by AI-nya sudah siap. Batch yang belum siap tidak dapat dipilih.
+      </div>
+      <div class="card-tools">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" id="b-q" placeholder="Cari nama batch…" oninput="renderAll()">
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="bf-all" onclick="setBatchFilter('')">Semua</button>
+          <button class="toggle-btn" id="bf-ready" onclick="setBatchFilter('ready')">Siap di-assign</button>
+        </div>
+      </div>
+      <div class="pick-list" id="batch-list"></div>
+    </div>
+
+    <!-- ─── 2 · Pilih Kandidat ─── -->
+    <div class="card" id="card2">
+      <div class="card-title">
+        <span class="step-num">2</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Pilih Kandidat
+        <span class="ct-sub" id="c2-batch"></span>
+      </div>
+
+      <div id="c2-empty">
+        <div class="empty-state" style="margin-top:16px;">
+          <div class="empty-state-icon">🗂️</div>
+          <h2>Pilih batch terlebih dahulu</h2>
+          <p>Daftar kandidat beserta hasil report by AI-nya akan muncul setelah kamu memilih batch di langkah 1.</p>
+        </div>
+      </div>
+
+      <div id="c2-body" hidden>
+        <div class="card-tools">
+          <label class="chk-label">
+            <input type="checkbox" id="chk-all" onchange="toggleAll(this.checked)">
+            Pilih semua yang bisa ditugaskan
+          </label>
+          <span class="tool-count" id="c2-count"></span>
+          <div class="search-wrap" style="margin-left:auto;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="c-q" placeholder="Cari nama kandidat…" oninput="renderAll()">
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th style="width:38px;"></th>
+                <th>Kandidat</th>
+                <th>Skor AI</th>
+                <th>Report Siap</th>
+                <th>Status</th>
+              </tr></thead>
+              <tbody id="cand-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 3 · Asesor & Periode SLA ─── -->
+    <div class="card" id="card3">
+      <div class="card-title">
+        <span class="step-num">3</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+        Asesor &amp; Periode SLA
+      </div>
+      <div class="card-note">
+        Tulis nama dan email asesor yang akan memvalidasi kandidat terpilih. Satu asesor boleh ditugaskan
+        di beberapa batch sekaligus — penugasan lintas batch bisa dipantau di halaman
+        <a href="monitoring.html" class="link-sm">Monitoring</a>.
+      </div>
+
+      <div class="section-divider">Asesor</div>
+      <div class="f-row cols-2">
+        <div class="f-group">
+          <label class="f-label" for="f-asr-name">Nama Asesor <span>· wajib</span></label>
+          <input type="text" class="f-input" id="f-asr-name" list="asr-name-list" autocomplete="off"
+                 placeholder="Contoh: Dr. Rina Kusumawardani" oninput="onAssessorName(this.value)">
+          <datalist id="asr-name-list"></datalist>
+        </div>
+        <div class="f-group">
+          <label class="f-label" for="f-asr-email">Email Asesor <span>· wajib</span></label>
+          <input type="email" class="f-input" id="f-asr-email" list="asr-email-list" autocomplete="off"
+                 placeholder="nama@assessor.id" oninput="onAssessorEmail(this.value)">
+          <datalist id="asr-email-list"></datalist>
+          <div class="f-hint bad" id="asr-email-hint" style="margin-top:2px;" hidden></div>
+        </div>
+      </div>
+      <div class="f-hint" id="asr-hint"></div>
+
+      <div class="section-divider">Periode SLA</div>
+      <div class="f-row cols-2">
+        <div class="f-group">
+          <label class="f-label" for="f-start">Tanggal Mulai</label>
+          <input type="date" class="f-input" id="f-start" onchange="onSla()" oninput="onSla()">
+        </div>
+        <div class="f-group">
+          <label class="f-label" for="f-due">Deadline <span>· mengikat SLA</span></label>
+          <input type="date" class="f-input" id="f-due" onchange="onSla()" oninput="onSla()">
+        </div>
+      </div>
+      <div class="f-hint" id="sla-hint"></div>
+
+      <div class="section-divider">Catatan untuk Asesor</div>
+      <div class="f-group">
+        <label class="f-label" for="f-note">Catatan <span>· opsional</span></label>
+        <textarea class="f-textarea" id="f-note" placeholder="Fokuskan review pada aspek Persuasi dan Negosiasi" oninput="onNote(this.value)"></textarea>
+      </div>
+    </div>
+
+    <!-- ─── Ringkasan + aksi ─── -->
+    <div class="sum-card">
+      <div>
+        <div class="sum-label">Ringkasan penugasan</div>
+        <div class="sum-text" id="sum-text"></div>
+      </div>
+      <div class="sum-actions">
+        <button class="btn-cancel" onclick="resetForm()">Reset</button>
+        <button class="btn-submit" id="btn-submit" onclick="submitAssign()" disabled>Tugaskan ke Asesor</button>
+      </div>
+    </div>
+
+    <!-- ─── 4 · Penugasan pada batch ini ─── -->
+    <div class="card" id="card4" hidden>
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Penugasan pada batch ini
+        <span class="ct-sub" id="c4-batch"></span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:16px;">
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr>
+              <th>Asesor</th>
+              <th>Kandidat</th>
+              <th>Progress</th>
+              <th>Periode SLA</th>
+              <th>Status SLA</th>
+              <th style="width:90px;"></th>
+            </tr></thead>
+            <tbody id="grp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <a href="monitoring.html" class="link-sm">Lihat Monitoring →</a>
+      </div>
+    </div>
+
+    <div class="foot-row">
+      <button class="link-btn" onclick="resetDemoData()">Reset data demo</button>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="../competency-data.js"></script>
+<script src="assessor-data.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   Assignment Asesor — semua data lewat AD (assessor-data.js)
+   ═══════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const esc = s => AD.esc(s);
+
+/* ── state form ── */
+const S = {
+  batchId: null,
+  candIds: [],
+  assessorName: '',
+  assessorEmail: '',
+  slaStart: AD.offsetISO(0),
+  slaDue: AD.offsetISO(7),
+  note: '',
+  batchFilter: '',
+};
+
+/* view buffer — dipakai supaya handler onclick cukup mengirim index,
+   tidak perlu menyuntikkan id ke dalam atribut HTML.
+   `sug` = saran asesor dari penugasan sebelumnya (bukan master data). */
+const V = { batches: [], cands: [], groups: [], sug: [] };
+
+/* ── ikon kecil ── */
+const IC_WARN = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+/* ── warna ── */
+function progColor(pct) {
+  if (pct === 0)  return '#f87171';
+  if (pct < 50)   return '#fbbf24';
+  if (pct < 100)  return '#60a5fa';
+  return '#34d399';
+}
+const READINESS_CLASS = { 'Siap': 'bd-green', 'Sebagian Siap': 'bd-amber', 'Belum Siap': 'bd-slate' };
+const SLA_CLASS = { done: 'bd-green', ontrack: 'bd-blue', atrisk: 'bd-amber', overdue: 'bd-red' };
+
+function bar(pct, color) {
+  return '<div class="prog-bar"><div class="prog-track"><div class="prog-fill" style="width:' + pct +
+         '%;background:' + color + ';"></div></div><span class="prog-pct">' + pct + '%</span></div>';
+}
+
+/* ── durasi SLA (pakai daysUntil supaya konsisten dengan data layer) ── */
+function slaDuration() {
+  const a = AD.daysUntil(S.slaStart);
+  const b = AD.daysUntil(S.slaDue);
+  if (a == null || b == null) return null;
+  return b - a;
+}
+
+/* ═════════ 1 · BATCH ═════════ */
+function setBatchFilter(f) {
+  S.batchFilter = f;
+  $('bf-all').classList.toggle('active', f === '');
+  $('bf-ready').classList.toggle('active', f === 'ready');
+  renderAll();
+}
+
+function batchDisableReason(b) {
+  if (b.readiness === 'Belum Siap') return 'Report AI belum tersedia — kandidat belum menyelesaikan interview';
+  if (b.assignableCount === 0)      return 'Semua kandidat sudah ditugaskan';
+  return null;
+}
+
+function renderBatches() {
+  const all = AD.batches();
+  const q   = ($('b-q').value || '').trim().toLowerCase();
+
+  let list = all;
+  if (q) list = list.filter(b =>
+    String(b.batchName).toLowerCase().includes(q) ||
+    String(b.paketName).toLowerCase().includes(q));
+  if (S.batchFilter === 'ready') list = list.filter(b => !batchDisableReason(b));
+
+  V.batches = list;
+
+  if (!all.length) {
+    $('batch-list').innerHTML =
+      '<div class="empty-state"><div class="empty-state-icon">📭</div>' +
+      '<h2>Belum ada batch kandidat</h2>' +
+      '<p>Buat assignment kandidat terlebih dahulu di menu Assignment. Setelah kandidat menyelesaikan ' +
+      'interview dan report by AI terbit, batch-nya akan muncul di sini.</p>' +
+      '<a href="assignment.html" class="btn-outline-sm">Ke Assignment Kandidat →</a></div>';
+    return;
+  }
+  if (!list.length) {
+    const onlyFilter = S.batchFilter === 'ready' && !q;
+    $('batch-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>' +
+      (onlyFilter
+        ? '<h2>Tidak ada batch yang bisa di-assign</h2>' +
+          '<p>Setiap batch yang report AI-nya siap sudah ditugaskan seluruhnya, atau kandidatnya ' +
+          'belum menyelesaikan interview. Pilih filter “Semua” untuk melihat statusnya.</p>'
+        : '<h2>Tidak ada batch yang cocok</h2>' +
+          '<p>Ubah kata kunci pencarian atau pilih filter “Semua”.</p>') +
+      '</div>';
+    return;
+  }
+
+  $('batch-list').innerHTML = list.map((b, i) => {
+    const reason = batchDisableReason(b);
+    const pct    = b.total ? Math.round((b.reportReady / b.total) * 100) : 0;
+    const sel    = S.batchId === b.id;
+
+    const inner =
+      '<div class="pick-top"><div>' +
+        '<div class="pick-name">' + esc(b.batchName) + '</div>' +
+        '<div class="pick-meta">' + esc(b.paketName) + ' · ' +
+          esc(AD.fmtDate(b.periodStart)) + ' – ' + esc(AD.fmtDate(b.periodEnd)) + '</div>' +
+      '</div>' +
+      '<span class="status-badge ' + (READINESS_CLASS[b.readiness] || 'bd-slate') + '">' +
+        esc(b.readiness) + '</span></div>' +
+      '<div class="pick-stats">' + b.total + ' kandidat · ' + b.reportReady + ' report AI siap · ' +
+        b.assignedCount + ' sudah ditugaskan · <b>' + b.assignableCount + ' bisa ditugaskan</b></div>' +
+      '<div style="margin-top:8px;">' + bar(pct, progColor(pct)) + '</div>' +
+      (reason ? '<div class="pick-reason">' + IC_WARN + '<span>' + esc(reason) + '</span></div>' : '');
+
+    // Batch yang bisa ditugaskan → kartu radio biasa.
+    if (!reason) {
+      return '<button type="button" class="pick-card' + (sel ? ' sel' : '') +
+        '" onclick="pickBatch(' + i + ')">' + inner + '</button>';
+    }
+
+    // Batch terkunci. Kalau sudah punya penugasan, admin tetap harus bisa
+    // membukanya untuk memonitor / membatalkan grup (tanpa itu batch yang
+    // 100% ter-assign jadi tidak bisa disentuh sama sekali).
+    const review = b.assignedCount > 0
+      ? '<button type="button" class="review-link" onclick="reviewBatch(' + i + ')">' +
+        'Lihat penugasan batch ini →</button>'
+      : '';
+    return '<div class="pick-card dis' + (sel ? ' sel' : '') + '">' + inner + review + '</div>';
+  }).join('');
+}
+
+function pickBatch(i) {
+  const b = V.batches[i];
+  if (!b || b.id === S.batchId) return;
+  S.batchId = b.id;
+  S.candIds = [];
+  renderAll();
+}
+
+/** buka batch terkunci dalam mode tinjau saja (kandidat tidak bisa dicentang) */
+function reviewBatch(i) {
+  const b = V.batches[i];
+  if (!b) return;
+  S.batchId = b.id;
+  S.candIds = [];
+  renderAll();
+}
+
+/* ═════════ 2 · KANDIDAT ═════════ */
+function assignedMap(batchId) {
+  const map = {};
+  AD.readTasks().forEach(t => { if (t.batchId === batchId) map[t.candidateId] = t.assessorName; });
+  return map;
+}
+
+function avgChip(avg) {
+  const cls = avg >= 4 ? 'bd-green' : (avg >= 3 ? 'bd-blue' : 'bd-amber');
+  return '<span class="status-badge ' + cls + '">avg ' + esc(avg) + '</span>';
+}
+
+function renderCandidates(batch) {
+  if (!batch) {
+    $('c2-empty').hidden = false;
+    $('c2-body').hidden  = true;
+    $('c2-batch').textContent = '';
+    V.cands = [];
+    return;
+  }
+  $('c2-empty').hidden = true;
+  $('c2-body').hidden  = false;
+  $('c2-batch').textContent = batch.batchName;
+
+  const assigned = assignedMap(batch.id);
+  const q = ($('c-q').value || '').trim().toLowerCase();
+  let rows = batch.candidates;
+  if (q) rows = rows.filter(c =>
+    String(c.nama).toLowerCase().includes(q) ||
+    String(c.email || '').toLowerCase().includes(q));
+
+  V.cands = rows;
+
+  const pickedSet   = new Set(S.candIds);
+  const visPickable = rows.filter(c => !assigned[c.id] && c.aiReport && c.aiReport.ready);
+  const visPicked   = visPickable.filter(c => pickedSet.has(c.id)).length;
+
+  $('c2-count').innerHTML = '<b>' + S.candIds.length + '</b> dari <b>' + batch.assignableCount +
+                            '</b> kandidat dipilih';
+  const chkAll = $('chk-all');
+  chkAll.disabled      = visPickable.length === 0;
+  chkAll.checked       = visPickable.length > 0 && visPicked === visPickable.length;
+  chkAll.indeterminate = visPicked > 0 && visPicked < visPickable.length;
+
+  if (!rows.length) {
+    $('cand-tbody').innerHTML = '<tr><td colspan="5" class="empty">Tidak ada kandidat yang cocok dengan pencarian.</td></tr>';
+    return;
+  }
+
+  $('cand-tbody').innerHTML = rows.map((c, i) => {
+    const asr    = assigned[c.id] || null;
+    const ready  = !!(c.aiReport && c.aiReport.ready);
+    const canPick = ready && !asr;
+    const picked = pickedSet.has(c.id);
+
+    const skor = ready
+      ? c.aiReport.achieved + '/' + c.aiReport.total + ' aspek tercapai<div style="margin-top:4px;">' +
+        avgChip(c.aiReport.avgLevel) + '</div>'
+      : '<span class="muted">–</span>';
+
+    const rpt = ready
+      ? esc(AD.fmtDate(c.aiReport.generatedAt))
+      : '<span class="muted">belum siap</span>';
+
+    let status;
+    if (asr) {
+      status = '<span class="status-badge bd-slate">Ditugaskan ke ' + esc(asr) + '</span>';
+    } else if (!ready) {
+      status = '<span class="status-badge bd-slate">Report AI belum siap</span>' +
+               '<div class="cell-sub">status interview: ' + esc(c.status) + '</div>';
+    } else {
+      status = '<span class="status-badge bd-green">Siap divalidasi</span>';
+    }
+
+    return '<tr class="' + (canPick ? '' : 'row-dim') + '">' +
+      '<td><input type="checkbox"' + (canPick ? '' : ' disabled') + (picked ? ' checked' : '') +
+        ' onchange="toggleCand(' + i + ', this.checked)"></td>' +
+      '<td><div class="cell-name">' + esc(c.nama) + '</div>' +
+        '<div class="cell-sub">' + esc(c.email || '–') + '</div></td>' +
+      '<td class="cell-nowrap">' + skor + '</td>' +
+      '<td class="cell-nowrap" style="font-size:12px;color:var(--nm-muted-fg);">' + rpt + '</td>' +
+      '<td>' + status + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function toggleCand(i, on) {
+  const c = V.cands[i];
+  if (!c) return;
+  const set = new Set(S.candIds);
+  if (on) set.add(c.id); else set.delete(c.id);
+  S.candIds = Array.from(set);
+  renderAll();
+}
+
+function toggleAll(on) {
+  const batch = S.batchId ? AD.batchById(S.batchId) : null;
+  if (!batch) return;
+  const assigned = assignedMap(batch.id);
+  const set = new Set(S.candIds);
+  V.cands
+    .filter(c => !assigned[c.id] && c.aiReport && c.aiReport.ready)
+    .forEach(c => { if (on) set.add(c.id); else set.delete(c.id); });
+  S.candIds = Array.from(set);
+  renderAll();
+}
+
+/* ═════════ 3 · ASESOR & SLA ═════════
+   Platform belum punya master data asesor, jadi nama & email diisi bebas.
+   `AD.assessorSuggestions()` hanya riwayat pemakaian untuk <datalist>. */
+
+/* datalist dibangun ulang hanya kalau daftar sarannya benar-benar berubah,
+   supaya dropdown tidak tertutup sendiri tiap kali admin menekan tombol */
+let sugKey = null;
+function renderSuggestions() {
+  const sug = AD.assessorSuggestions();
+  V.sug = sug;
+  const key = sug.map(s => s.nama + '|' + s.email).join('~');
+  if (key === sugKey) return;
+  sugKey = key;
+  $('asr-name-list').innerHTML  = sug.map(s => '<option value="' + esc(s.nama)  + '"></option>').join('');
+  $('asr-email-list').innerHTML = sug.map(s => '<option value="' + esc(s.email) + '"></option>').join('');
+}
+
+function emailValid(v) { return AD.EMAIL_RE.test(String(v || '').trim()); }
+function assessorReady() { return !!(S.assessorName.trim() && emailValid(S.assessorEmail)); }
+
+/** isi field pasangannya dari saran — HANYA kalau field tujuan masih kosong */
+function onAssessorName(v) {
+  S.assessorName = v;
+  const k = v.trim().toLowerCase();
+  const hit = k ? V.sug.find(s => String(s.nama).trim().toLowerCase() === k) : null;
+  if (hit && !S.assessorEmail.trim()) {
+    S.assessorEmail = hit.email;
+    $('f-asr-email').value = hit.email;
+  }
+  renderAll();
+}
+
+function onAssessorEmail(v) {
+  S.assessorEmail = v;
+  const k = AD.assessorKey(v);
+  const hit = k ? V.sug.find(s => AD.assessorKey(s.email) === k) : null;
+  if (hit && !S.assessorName.trim()) {
+    S.assessorName = hit.nama;
+    $('f-asr-name').value = hit.nama;
+  }
+  renderAll();
+}
+
+function renderAssessorFields() {
+  renderSuggestions();
+
+  const bad  = $('asr-email-hint');
+  const em   = S.assessorEmail.trim();
+  const show = em !== '' && !emailValid(em);
+  bad.hidden = !show;
+  if (show) bad.textContent = 'Format email tidak valid — contoh: nama@assessor.id';
+
+  $('asr-hint').textContent = V.sug.length
+    ? 'Saran pada kedua field hanya diambil dari penugasan sebelumnya, bukan master data — ' +
+      'asesor baru boleh diisi langsung.'
+    : 'Belum ada riwayat penugasan, jadi belum ada saran. Isi nama dan email asesor secara manual.';
+}
+
+function onSla() {
+  S.slaStart = $('f-start').value;
+  S.slaDue   = $('f-due').value;
+  renderAll();
+}
+function onNote(v) { S.note = v; }
+
+function renderSla() {
+  const hint = $('sla-hint');
+  $('f-due').min = S.slaStart || '';
+  if (!S.slaStart) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Tanggal mulai wajib diisi — periode SLA butuh titik awal yang jelas.';
+    return;
+  }
+  if (!S.slaDue) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Deadline wajib diisi — asesor perlu batas waktu yang mengikat SLA.';
+    return;
+  }
+  const dur = slaDuration();
+  if (dur != null && dur < 0) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Deadline tidak boleh sebelum tanggal mulai.';
+    return;
+  }
+  hint.className = 'f-hint';
+  hint.textContent = 'Durasi SLA ' + (dur == null ? '–' : dur) + ' hari · deadline ' + AD.fmtDate(S.slaDue);
+}
+
+/* ═════════ Ringkasan + submit ═════════ */
+function formReady() {
+  const dur = slaDuration();
+  return !!(S.batchId && S.candIds.length && assessorReady() && S.slaStart && S.slaDue && dur != null && dur >= 0);
+}
+
+function renderSummary(batch) {
+  const el  = $('sum-text');
+  const btn = $('btn-submit');
+  const ok  = formReady();
+  btn.disabled = !ok;
+
+  if (ok) {
+    const dur = slaDuration();
+    el.className = 'sum-text';
+    el.textContent = S.candIds.length + ' kandidat · ' + (batch ? batch.batchName : '–') + ' · ' +
+      S.assessorName.trim() + ' (' + S.assessorEmail.trim() + ')' +
+      ' · deadline ' + AD.fmtDate(S.slaDue) +
+      (dur == null ? '' : ' (' + dur + ' hari)');
+    return;
+  }
+
+  // batch terkunci yang dibuka dalam mode tinjau: jelaskan jalan keluarnya
+  if (batch && batch.assignableCount === 0) {
+    el.className = 'sum-text incomplete';
+    el.textContent = 'Batch “' + batch.batchName + '” tidak punya kandidat yang bisa ditugaskan — ' +
+      'seluruh report AI yang siap sudah dipegang asesor. Batalkan salah satu penugasan di bawah ' +
+      'untuk membebaskan kandidat, atau pilih batch lain.';
+    return;
+  }
+
+  const miss = [];
+  if (!S.batchId)          miss.push('pilih batch');
+  if (!S.candIds.length)   miss.push('pilih minimal 1 kandidat');
+  if (!S.assessorName.trim()) miss.push('isi nama asesor');
+  const em = S.assessorEmail.trim();
+  if (!em)                 miss.push('isi email asesor');
+  else if (!emailValid(em)) miss.push('perbaiki format email asesor');
+  if (!S.slaStart)         miss.push('isi tanggal mulai');
+  if (!S.slaDue)           miss.push('isi deadline SLA');
+  const dur = slaDuration();
+  if (S.slaStart && S.slaDue && dur != null && dur < 0) miss.push('perbaiki deadline yang lebih awal dari tanggal mulai');
+
+  el.className = 'sum-text incomplete';
+  el.textContent = 'Belum lengkap — ' + miss.join(', ') + '.';
+}
+
+function submitAssign() {
+  if (!formReady()) return;
+  const res = AD.assign({
+    batchId: S.batchId,
+    candidateIds: S.candIds.slice(),
+    assessorName: S.assessorName,
+    assessorEmail: S.assessorEmail,
+    slaStart: S.slaStart,
+    slaDue: S.slaDue,
+    note: S.note,
+  });
+  toast(res.msg);
+  if (res.ok) {
+    // batch dipertahankan supaya admin bisa langsung menugaskan kelompok berikutnya
+    S.candIds       = [];
+    S.assessorName  = '';
+    S.assessorEmail = '';
+    S.note          = '';
+    $('f-asr-name').value  = '';
+    $('f-asr-email').value = '';
+    $('f-note').value      = '';
+  }
+  renderAll();
+}
+
+function resetForm() {
+  S.batchId       = null;
+  S.candIds       = [];
+  S.assessorName  = '';
+  S.assessorEmail = '';
+  S.note          = '';
+  S.slaStart      = AD.offsetISO(0);
+  S.slaDue        = AD.offsetISO(7);
+  $('f-asr-name').value  = '';
+  $('f-asr-email').value = '';
+  $('f-note').value  = '';
+  $('f-start').value = S.slaStart;
+  $('f-due').value   = S.slaDue;
+  $('b-q').value     = '';
+  $('c-q').value     = '';
+  setBatchFilter('');
+  toast('Form direset');
+}
+
+/* ═════════ 4 · Penugasan pada batch ini ═════════ */
+function renderExisting(batch) {
+  if (!batch) { $('card4').hidden = true; V.groups = []; return; }
+  $('card4').hidden = false;
+  $('c4-batch').textContent = batch.batchName;
+
+  const gs = AD.groups().filter(g => g.batchId === batch.id);
+  V.groups = gs;
+
+  if (!gs.length) {
+    $('grp-tbody').innerHTML = '<tr><td colspan="6" class="empty">Belum ada penugasan untuk batch ini.</td></tr>';
+    return;
+  }
+
+  $('grp-tbody').innerHTML = gs.map((g, i) =>
+    '<tr>' +
+      '<td><div class="cell-name">' + esc(g.assessorName) + '</div>' +
+        '<div class="cell-sub">' + esc(g.assessorEmail || '–') + '</div>' +
+        '<div class="cell-sub">ditugaskan ' + esc(AD.fmtDate(g.assignedAt)) + '</div></td>' +
+      '<td>' + g.total + ' kandidat</td>' +
+      '<td>' + bar(g.pct, progColor(g.pct)) +
+        '<div class="cell-sub">' + g.done + '/' + g.total + ' selesai' +
+        (g.review ? ' · ' + g.review + ' direview' : '') + '</div></td>' +
+      '<td style="font-size:12px;">' + esc(AD.fmtDate(g.slaStart)) + ' – ' + esc(AD.fmtDate(g.slaDue)) + '</td>' +
+      '<td><span class="status-badge ' + (SLA_CLASS[g.sla.key] || 'bd-slate') + '">' + esc(g.sla.label) + '</span>' +
+        '<div class="cell-sub">' + esc(AD.slaCountdown(g.sla)) + '</div></td>' +
+      '<td><button class="btn-row-danger" onclick="askCancel(' + i + ')">Batalkan</button></td>' +
+    '</tr>').join('');
+}
+
+function askCancel(i) {
+  const g = V.groups[i];
+  if (!g) return;
+  const yes = confirm('Batalkan penugasan ' + g.total + ' kandidat kepada ' + g.assessorName + '?\n' +
+                      'Tugas validasi yang sudah dikerjakan akan ikut terhapus.');
+  if (!yes) return;
+  const n = AD.cancelGroup(g.groupId);
+  toast(n + ' tugas validasi dibatalkan');
+  renderAll();
+}
+
+/* ═════════ Render utama ═════════ */
+function renderAll() {
+  let batch = S.batchId ? AD.batchById(S.batchId) : null;
+  if (S.batchId && !batch) { S.batchId = null; S.candIds = []; }
+
+  // buang pilihan kandidat yang sudah tidak assignable (mis. setelah submit / reset demo)
+  if (batch) {
+    const ok = new Set(batch.assignable.map(c => c.id));
+    S.candIds = S.candIds.filter(id => ok.has(id));
+  } else {
+    S.candIds = [];
+  }
+
+  renderBatches();
+  renderCandidates(batch);
+  renderAssessorFields();
+  renderSla();
+  renderSummary(batch);
+  renderExisting(batch);
+
+  $('card2').classList.toggle('step-locked', !batch);
+  $('card3').classList.toggle('step-locked', S.candIds.length === 0);
+}
+
+/* ═════════ Demo data ═════════ */
+function resetDemoData() {
+  AD.resetDemo();
+  AD.ensureData();
+  S.batchId       = null;
+  S.candIds       = [];
+  S.assessorName  = '';
+  S.assessorEmail = '';
+  $('f-asr-name').value  = '';
+  $('f-asr-email').value = '';
+  renderAll();
+  toast('Data demo direset');
+}
+
+/* ═════════ Sidebar / toast ═════════ */
+function toggleSidebar() { $('sidebar').classList.toggle('collapsed'); }
+function toggleSection(el) {
+  const items = el.nextElementSibling;
+  const chev  = el.querySelector('.sb-chevron');
+  const open  = chev.classList.toggle('open');
+  items.style.display = open ? '' : 'none';
+}
+function toast(msg, dur = 2800) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+/* ═════════ Init ═════════ */
+AD.ensureData();
+$('f-start').value = S.slaStart;
+$('f-due').value   = S.slaDue;
+renderAll();
+</script>
+</body>
+</html>
