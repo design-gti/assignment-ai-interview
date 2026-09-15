@@ -15,8 +15,10 @@
     --nm-border:#e2e8f0;--nm-muted:#f8fafc;--nm-muted-fg:#64748b;
     --nm-input:#e2e8f0;--nm-radius:0.625rem;
   }
+  *,*::before,*::after{box-sizing:border-box;}
+  [hidden]{display:none !important;}
   html,body{height:100%;margin:0;}
-  body{background:#f1f5f9;font-family:'Inter',sans-serif;display:flex;height:100vh;overflow:hidden;}
+  body{background:#f1f5f9;font-family:'Inter',sans-serif;display:flex;height:100vh;overflow:hidden;color:var(--nm-fg);}
 
   /* ── Sidebar ── */
   .sidebar{width:240px;flex-shrink:0;background:#0f172a;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:width .25s;}
@@ -35,7 +37,6 @@
   .sb-section:first-child{border-top:none;margin-top:0;}
   .sb-section-title{padding:4px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:color .15s;}
   .sb-section-title.dim-sect{color:#334155;}
-  .sb-section-title.idle-sect{color:#64748b;}
   .sb-section-title.active-sect{color:#60a5fa;}
   .sb-section-dot{width:6px;height:6px;border-radius:50%;background:#3b82f6;display:inline-block;margin-right:5px;}
   .sb-chevron{font-size:10px;transition:transform .2s;}
@@ -54,41 +55,132 @@
 
   /* ── Main ── */
   .main-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
-  .page-head{padding:24px 28px 0;}
+  .page-head{padding:24px 28px 0;max-width:1080px;}
   .page-title{font-size:20px;font-weight:700;color:var(--nm-fg);margin:0;}
-  main{padding:20px 28px 64px;max-width:860px;}
+  main{padding:18px 28px 64px;max-width:1080px;}
+
+  /* ── Tab halaman (Assignment Kandidat / Assignment Asesor) — namespace
+       terpisah dari .tab-btn/.tab-pane (dipakai sub-tab Excel/Manual di
+       dalam tab Kandidat) supaya klik salah satu tidak saling mematikan. */
+  .main-tab-bar{display:flex;gap:4px;margin-top:14px;border-bottom:1px solid var(--nm-border);}
+  .main-tab-btn{padding:9px 4px;margin-right:22px;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;color:#64748b;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Inter',sans-serif;transition:color .15s,border-color .15s;}
+  .main-tab-btn.active{color:#3b82f6;border-bottom-color:#3b82f6;}
+  .main-tab-btn:hover:not(.active){color:#334155;}
 
   /* ── Card ── */
-  .card{background:#fff;border:1px solid var(--nm-border);border-radius:var(--nm-radius);padding:24px;margin-bottom:16px;}
-  .card-title{font-size:14px;font-weight:700;color:var(--nm-fg);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
-  .card-title svg{color:#3b82f6;}
+  .card{background:#fff;border:1px solid var(--nm-border);border-radius:var(--nm-radius);padding:22px 24px;margin-bottom:16px;transition:opacity .2s;}
+  .card.step-locked{opacity:.5;pointer-events:none;}
+  .card-title{font-size:14px;font-weight:700;color:var(--nm-fg);display:flex;align-items:center;gap:9px;}
+  .card-title svg{color:#3b82f6;flex-shrink:0;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .card.step-locked .step-num{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0;}
+  .card-title .ct-sub{font-size:12px;font-weight:500;color:var(--nm-muted-fg);margin-left:auto;text-align:right;}
+  .card-note{font-size:12px;color:var(--nm-muted-fg);margin-top:8px;line-height:1.55;}
+  .section-divider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--nm-border);}
+  /* tab Kandidat markup-nya lebih tua & bergantung pada spasi bawaan class
+     ini (bukan margin inline seperti tab Asesor) — scoped supaya kartunya
+     tidak jadi mepet begitu style digabung */
+  #panel-kandidat .card-title{margin-bottom:18px;gap:8px;}
+  #panel-kandidat .section-divider{margin:0 0 12px;}
+  #panel-kandidat .f-row{margin-bottom:16px;}
 
-  /* ── Form fields ── */
-  .f-row{display:grid;gap:16px;margin-bottom:16px;}
+  /* ── Toolbar dalam card (tab Asesor) ── */
+  .card-tools{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:16px 0 14px;}
+  .toggle-group{display:flex;border:1px solid var(--nm-border);border-radius:6px;overflow:hidden;}
+  .toggle-btn{padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#334155;border:none;font-family:inherit;transition:background .15s,color .15s;}
+  .toggle-btn.active{background:#0f172a;color:#fff;}
+  .toggle-btn:hover:not(.active){background:#f1f5f9;}
+  .search-wrap{position:relative;}
+  .search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--nm-muted-fg);pointer-events:none;}
+  .search-wrap input{padding:7px 10px 7px 28px;border-radius:6px;border:1px solid var(--nm-border);font-family:inherit;font-size:13px;background:var(--nm-bg);color:var(--nm-fg);width:220px;}
+  .search-wrap input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+  .tool-count{font-size:12px;color:var(--nm-muted-fg);}
+  .tool-count b{color:var(--nm-fg);}
+  .chk-label{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;user-select:none;}
+  input[type=checkbox]{accent-color:#3b82f6;width:15px;height:15px;cursor:pointer;margin:0;}
+  input[type=checkbox]:disabled{cursor:not-allowed;}
+
+  /* ── Kartu pilihan batch (tab Asesor) ── */
+  .pick-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media (max-width:1000px){.pick-list{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:700px){.pick-list{grid-template-columns:1fr;}}
+  .pick-list .pick-stats{margin-top:auto;padding-top:10px;}
+  .pick-list .pick-top{flex-direction:column;align-items:flex-start;gap:7px;}
+  .pick-list .pick-top .status-badge{order:-1;}
+  .pick-card{display:flex;flex-direction:column;width:100%;text-align:left;font-family:inherit;background:#fff;border:1px solid var(--nm-border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;}
+  .pick-card:not(.dis):not(:disabled):hover{border-color:#93c5fd;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+  .pick-card.sel{border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
+  .pick-card:disabled,.pick-card.dis{opacity:.6;cursor:not-allowed;background:var(--nm-muted);}
+  .pick-card.dis.sel{opacity:1;border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
+  .review-link{background:none;border:none;padding:0;margin-top:9px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#3b82f6;cursor:pointer;text-decoration:underline;}
+  .review-link:hover{color:#2563eb;}
+  .pick-card:focus-visible{outline:2px solid #93c5fd;outline-offset:1px;}
+  .pick-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .pick-name{font-size:13px;font-weight:700;color:var(--nm-fg);line-height:1.35;}
+  .pick-meta{font-size:11px;color:var(--nm-muted-fg);margin-top:3px;}
+  .pick-stats{font-size:11px;color:#475569;margin-top:10px;line-height:1.5;}
+  .pick-reason{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px 9px;margin-top:10px;}
+  .pick-reason svg{flex-shrink:0;margin-top:1px;color:#d97706;}
+
+  /* ── Badge ── */
+  .status-badge{display:inline-flex;align-items:center;gap:5px;border-radius:9999px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
+  .bd-green{background:#d1fae5;color:#065f46;border-color:#6ee7b7;}
+  .bd-amber{background:#fef3c7;color:#92400e;border-color:#fcd34d;}
+  .bd-slate{background:#f1f5f9;color:#64748b;border-color:#cbd5e1;}
+  .bd-blue{background:#dbeafe;color:#1e40af;border-color:#93c5fd;}
+  .bd-red{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+
+  /* ── Progress bar (tab Asesor) ── */
+  .prog-bar{display:flex;align-items:center;gap:8px;min-width:120px;}
+  .prog-track{flex:1;height:6px;background:#e2e8f0;border-radius:9999px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:9999px;transition:width .3s;}
+  .prog-pct{font-size:11px;color:var(--nm-muted-fg);width:34px;text-align:right;flex-shrink:0;}
+
+  /* ── Tabel (tab Asesor) ── */
+  .tbl-wrap{border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;}
+  .tbl-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;padding:9px 14px;font-size:11px;font-weight:500;color:var(--nm-muted-fg);border-bottom:1px solid var(--nm-border);background:#f8fafc;white-space:nowrap;}
+  td{padding:11px 14px;border-bottom:1px solid var(--nm-border);vertical-align:middle;}
+  tr:last-child td{border-bottom:0;}
+  tbody tr.row-dim{background:var(--nm-muted);}
+  tbody tr.row-dim td{color:#94a3b8;}
+  tbody tr.row-dim .cell-name{color:#94a3b8;font-weight:500;}
+  tbody tr.row-dim .status-badge{opacity:.7;}
+  .cell-name{font-weight:600;color:var(--nm-fg);}
+  .cell-sub{font-size:11px;color:var(--nm-muted-fg);margin-top:2px;}
+  .cell-nowrap{white-space:nowrap;}
+  #cand-tbody td,#grp-tbody td{padding-top:10px;padding-bottom:10px;}
+  .tbl-scroll table{min-width:760px;}
+  .muted{color:var(--nm-muted-fg);}
+  .empty{text-align:center;color:var(--nm-muted-fg);padding:32px 14px;font-size:13px;}
+
+  /* ── Form ── */
+  .f-row{display:grid;gap:16px;}
   .f-row.cols-2{grid-template-columns:1fr 1fr;}
+  @media (max-width:700px){.f-row.cols-2{grid-template-columns:1fr;}}
   .f-group{display:flex;flex-direction:column;gap:5px;}
   .f-label{font-size:12px;font-weight:600;color:#374151;}
   .f-label span{color:#94a3b8;font-weight:400;}
-  .f-input,.f-select{width:100%;padding:8px 10px;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--nm-fg);background:#fff;box-sizing:border-box;transition:border-color .15s,box-shadow .15s;outline:none;}
-  .f-input:focus,.f-select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
-  .f-hint{font-size:11px;color:var(--nm-muted-fg);}
+  .f-input,.f-select,.f-textarea{width:100%;padding:8px 10px;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--nm-fg);background:#fff;box-sizing:border-box;transition:border-color .15s,box-shadow .15s;outline:none;}
+  .f-input:focus,.f-select:focus,.f-textarea:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+  .f-textarea{min-height:74px;resize:vertical;line-height:1.5;}
+  .f-hint{font-size:11px;color:var(--nm-muted-fg);margin-top:8px;}
+  .f-hint.bad{color:#b91c1c;font-weight:600;}
 
-  /* time dropdowns */
+  /* time dropdowns (tab Kandidat) */
   .time-pair{display:flex;align-items:center;gap:6px;}
   .time-pair .f-select{flex:1;}
   .time-sep{font-size:13px;color:#94a3b8;flex-shrink:0;}
 
-  /* ── Klaster chips ── */
+  /* ── Klaster chips (tab Kandidat) ── */
   .chips-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--nm-border);border-radius:6px;min-height:44px;background:#fff;}
   .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid;cursor:pointer;transition:all .15s;user-select:none;}
   .chip-check{width:14px;height:14px;display:none;}
   .chip.selected .chip-check{display:inline;}
   .chips-empty{font-size:12px;color:#94a3b8;padding:4px 2px;}
 
-  /* ── Divider ── */
-  .section-divider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--nm-border);}
-
-  /* ── Peserta tabs ── */
+  /* ── Sub-tab Excel/Manual (tab Kandidat) ── */
   .tab-bar{display:flex;border-bottom:2px solid var(--nm-border);margin-bottom:18px;}
   .tab-btn{padding:8px 16px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:#64748b;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:'Inter',sans-serif;transition:color .15s,border-color .15s;}
   .tab-btn.active{color:#3b82f6;border-bottom-color:#3b82f6;}
@@ -133,16 +225,58 @@
   .btn-del-row{background:none;border:none;cursor:pointer;padding:2px 6px;color:#94a3b8;font-size:13px;border-radius:4px;}
   .btn-del-row:hover{background:#fee2e2;color:#dc2626;}
 
-  /* ── Actions ── */
+  /* ── Empty state (tab Asesor) ── */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:44px 24px;border:1px dashed var(--nm-border);border-radius:8px;text-align:center;}
+  .empty-state-icon{font-size:32px;}
+  .empty-state h2{font-size:14px;font-weight:600;color:var(--nm-fg);margin:0;}
+  .empty-state p{font-size:12px;color:var(--nm-muted-fg);margin:0;max-width:340px;line-height:1.55;}
+
+  /* ── Ringkasan penugasan + penugasan existing (tab Asesor, satu container) ── */
+  .sum-card{background:#fff;border:1px solid var(--nm-border);border-top:3px solid #3b82f6;border-radius:var(--nm-radius);padding:20px 24px;margin-bottom:16px;}
+  .sum-label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:10px;}
+  .sum-label svg{color:#94a3b8;flex-shrink:0;}
+  .sum-divider{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--nm-border);}
+  .sum-divider span:last-child{font-size:12px;font-weight:600;text-transform:none;letter-spacing:normal;color:var(--nm-fg);}
+  .sum-stats{display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;}
+  .sum-stat{display:flex;align-items:center;gap:8px;padding:0 18px 0 0;margin-right:18px;border-right:1px solid var(--nm-border);}
+  .sum-stat:last-child{border-right:none;margin-right:0;padding-right:0;}
+  .sum-stat-ic{display:flex;flex-shrink:0;color:#3b82f6;}
+  .sum-stat-val{font-size:13px;font-weight:700;color:var(--nm-fg);line-height:1.3;}
+  .sum-stat-sub{font-size:11px;font-weight:500;color:var(--nm-muted-fg);margin-top:1px;line-height:1.3;}
+  .sum-notice{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--nm-muted-fg);line-height:1.6;max-width:640px;}
+  .sum-notice svg{flex-shrink:0;margin-top:1px;color:#94a3b8;}
+  .sum-notice.warn svg{color:#d97706;}
+  .sum-notice b{color:var(--nm-fg);font-weight:600;}
+  .miss-tag{display:inline-flex;align-items:center;background:#f1f5f9;color:#475569;border-radius:5px;padding:1px 7px;font-size:11px;font-weight:600;margin:0 2px;white-space:nowrap;}
+
+  /* ── Aksi form (dipakai kedua tab) ── */
   .form-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:20px 0 0;border-top:1px solid var(--nm-border);}
   .btn-reset{padding:9px 20px;background:#fff;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-reset:hover{border-color:#94a3b8;}
   .btn-submit{padding:9px 24px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-submit:hover{background:#2563eb;}
+  .btn-submit:hover:not(:disabled){background:#2563eb;}
+  .btn-submit:disabled{background:#cbd5e1;color:#f8fafc;cursor:not-allowed;}
+  .btn-outline-sm{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--nm-border);background:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:#374151;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;}
+  .btn-outline-sm:hover{border-color:#3b82f6;color:#3b82f6;}
+  .btn-row-danger{background:none;border:1px solid var(--nm-border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-row-danger:hover{border-color:#fca5a5;background:#fee2e2;color:#b91c1c;}
+  .link-sm{display:inline-block;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:500;}
+  .link-sm:hover{text-decoration:underline;}
+  .link-btn{background:none;border:none;padding:0;font-family:'Inter',sans-serif;font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline;}
+  .link-btn:hover{color:#64748b;}
+  .foot-row{margin-top:26px;padding-top:14px;border-top:1px solid var(--nm-border);}
 
   /* ── Toast ── */
-  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:13px;padding:10px 20px;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.2);z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:13px;padding:10px 20px;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.2);z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;max-width:80vw;text-align:center;}
   #toast.show{opacity:1;}
+
+  @media (max-width:700px){
+    .sidebar{width:64px !important;}
+    .sidebar .sb-logo-text,.sidebar .sb-section-title span:not(.sb-section-dot),
+    .sidebar .sb-item span,.sidebar .sb-chevron{display:none !important;}
+    .sidebar .sb-item{justify-content:center;padding:8px;border-left:none;margin:1px 4px;}
+    .sidebar .sb-section-title{justify-content:center;padding:6px;}
+  }
 </style>
 </head>
 <body>
@@ -183,18 +317,6 @@
         </a>
       </div>
     </div>
-    <div class="sb-section">
-      <div class="sb-section-title idle-sect" onclick="toggleSection(this)">
-        <span><span class="sb-section-dot"></span>Validasi Asesor</span>
-        <span class="sb-chevron open">▶</span>
-      </div>
-      <div class="sb-items">
-        <a href="assessor-assignment.html" class="sb-item">
-          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
-          <span>Assignment Asesor</span>
-        </a>
-      </div>
-    </div>
   </nav>
   <div class="sb-footer">v0.4 · prototype</div>
 </aside>
@@ -203,181 +325,372 @@
 <div class="main-area">
   <div class="page-head">
     <h1 class="page-title">Assignment</h1>
+    <div class="main-tab-bar">
+      <button class="main-tab-btn active" id="mtab-kandidat" onclick="switchMainTab('kandidat')">Assignment Kandidat</button>
+      <button class="main-tab-btn" id="mtab-asesor" onclick="switchMainTab('asesor')">Assignment Asesor</button>
+    </div>
   </div>
 
   <main>
-    <!-- ─── Informasi Batch ─── -->
-    <div class="card">
-      <div class="card-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Informasi Batch
-      </div>
-
-      <div class="f-row">
-        <div class="f-group">
-          <label class="f-label">Nama Batch</label>
-          <input id="fNama" class="f-input" type="text" placeholder="Contoh: Rekrutmen Manager Q3 2026">
+    <!-- ═══════════════════ TAB: ASSIGNMENT KANDIDAT ═══════════════════ -->
+    <div id="panel-kandidat">
+      <!-- ─── Informasi Batch ─── -->
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Informasi Batch
         </div>
-      </div>
 
-      <div class="section-divider">Periode</div>
-
-      <div class="f-row cols-2" style="margin-bottom:12px;">
-        <div class="f-group">
-          <label class="f-label">Tanggal Mulai</label>
-          <input id="fTglMulai" class="f-input" type="date">
-        </div>
-        <div class="f-group">
-          <label class="f-label">Tanggal Selesai</label>
-          <input id="fTglSelesai" class="f-input" type="date">
-        </div>
-      </div>
-
-      <div class="f-row cols-2" style="margin-bottom:20px;">
-        <div class="f-group">
-          <label class="f-label">Jam Mulai</label>
-          <div class="time-pair">
-            <select id="fJamMulaiH" class="f-select"></select>
-            <span class="time-sep">:</span>
-            <select id="fJamMulaiM" class="f-select"></select>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Nama Batch</label>
+            <input id="fNama" class="f-input" type="text" placeholder="Contoh: Rekrutmen Manager Q3 2026">
           </div>
         </div>
-        <div class="f-group">
-          <label class="f-label">Jam Selesai</label>
-          <div class="time-pair">
-            <select id="fJamSelesaiH" class="f-select"></select>
-            <span class="time-sep">:</span>
-            <select id="fJamSelesaiM" class="f-select"></select>
+
+        <div class="section-divider">Periode</div>
+
+        <div class="f-row cols-2" style="margin-bottom:12px;">
+          <div class="f-group">
+            <label class="f-label">Tanggal Mulai</label>
+            <input id="fTglMulai" class="f-input" type="date">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Tanggal Selesai</label>
+            <input id="fTglSelesai" class="f-input" type="date">
           </div>
         </div>
-      </div>
 
-      <div class="section-divider">Konfigurasi</div>
-
-      <div class="f-row cols-2">
-        <div class="f-group">
-          <label class="f-label">Subdomain</label>
-          <select id="fSubdomain" class="f-select">
-            <option value="">— Pilih subdomain —</option>
-            <option value="app">app.talentlytica.com</option>
-            <option value="demo">demo.talentlytica.com</option>
-            <option value="staging">staging.talentlytica.com</option>
-          </select>
-        </div>
-        <div class="f-group">
-          <label class="f-label">Paket Interview</label>
-          <select id="fPaket" class="f-select">
-            <option value="">— Pilih paket —</option>
-          </select>
-          <span class="f-hint" id="paketHint"></span>
-        </div>
-      </div>
-
-      <div class="f-group">
-        <label class="f-label">Klaster <span>(opsional — pilih satu atau lebih)</span></label>
-        <div class="chips-wrap" id="clusterChips">
-          <span class="chips-empty">Memuat klaster…</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── Input Peserta ─── -->
-    <div class="card">
-      <div class="card-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Input Peserta
-      </div>
-
-      <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('excel',this)">Upload Excel</button>
-        <button class="tab-btn" onclick="switchTab('manual',this)">Input Manual</button>
-      </div>
-
-      <!-- Tab Excel -->
-      <div class="tab-pane active" id="tab-excel">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div>
-            <div class="dropzone" id="dropzone"
-                 onclick="document.getElementById('xlsxInput').click()"
-                 ondragover="event.preventDefault();this.classList.add('drag')"
-                 ondragleave="this.classList.remove('drag')"
-                 ondrop="handleDrop(event)">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <p>Drag file ke area ini</p>
-              <small>atau</small>
-              <div><button class="dz-btn" type="button" onclick="event.stopPropagation();document.getElementById('xlsxInput').click()">Upload File</button></div>
-              <small style="margin-top:8px;display:block;">.xlsx / .xls · Maks 300 peserta</small>
+        <div class="f-row cols-2" style="margin-bottom:20px;">
+          <div class="f-group">
+            <label class="f-label">Jam Mulai</label>
+            <div class="time-pair">
+              <select id="fJamMulaiH" class="f-select"></select>
+              <span class="time-sep">:</span>
+              <select id="fJamMulaiM" class="f-select"></select>
             </div>
-            <input type="file" id="xlsxInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
-            <div id="uploadInfo" style="display:none;">
-              <div class="upload-info">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                <span id="uploadInfoText"></span>
-                <button class="upload-reset" onclick="resetUpload()">Hapus</button>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Jam Selesai</label>
+            <div class="time-pair">
+              <select id="fJamSelesaiH" class="f-select"></select>
+              <span class="time-sep">:</span>
+              <select id="fJamSelesaiM" class="f-select"></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider">Konfigurasi</div>
+
+        <div class="f-row cols-2">
+          <div class="f-group">
+            <label class="f-label">Subdomain</label>
+            <select id="fSubdomain" class="f-select">
+              <option value="">— Pilih subdomain —</option>
+              <option value="app">app.talentlytica.com</option>
+              <option value="demo">demo.talentlytica.com</option>
+              <option value="staging">staging.talentlytica.com</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Paket Interview</label>
+            <select id="fPaket" class="f-select">
+              <option value="">— Pilih paket —</option>
+            </select>
+            <span class="f-hint" id="paketHint"></span>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Klaster <span>(opsional — pilih satu atau lebih)</span></label>
+          <div class="chips-wrap" id="clusterChips">
+            <span class="chips-empty">Memuat klaster…</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Input Peserta ─── -->
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Input Peserta
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('excel',this)">Upload Excel</button>
+          <button class="tab-btn" onclick="switchTab('manual',this)">Input Manual</button>
+        </div>
+
+        <!-- Tab Excel -->
+        <div class="tab-pane active" id="tab-excel">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div>
+              <div class="dropzone" id="dropzone"
+                   onclick="document.getElementById('xlsxInput').click()"
+                   ondragover="event.preventDefault();this.classList.add('drag')"
+                   ondragleave="this.classList.remove('drag')"
+                   ondrop="handleDrop(event)">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p>Drag file ke area ini</p>
+                <small>atau</small>
+                <div><button class="dz-btn" type="button" onclick="event.stopPropagation();document.getElementById('xlsxInput').click()">Upload File</button></div>
+                <small style="margin-top:8px;display:block;">.xlsx / .xls · Maks 300 peserta</small>
+              </div>
+              <input type="file" id="xlsxInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
+              <div id="uploadInfo" style="display:none;">
+                <div class="upload-info">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span id="uploadInfoText"></span>
+                  <button class="upload-reset" onclick="resetUpload()">Hapus</button>
+                </div>
               </div>
             </div>
+            <div class="instr">
+              <div class="instr-title">Instruksi dan Ketentuan</div>
+              <ul>
+                <li>Gunakan template Excel yang disediakan</li>
+                <li>Kolom <strong>Assessee name</strong> dan <strong>Assessee email</strong> wajib diisi</li>
+                <li>Maksimum <strong>300 peserta</strong> per batch</li>
+              </ul>
+              <button class="dl-tpl-btn" onclick="downloadTemplate()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Template Excel
+              </button>
+            </div>
           </div>
-          <div class="instr">
-            <div class="instr-title">Instruksi dan Ketentuan</div>
-            <ul>
-              <li>Gunakan template Excel yang disediakan</li>
-              <li>Kolom <strong>Assessee name</strong> dan <strong>Assessee email</strong> wajib diisi</li>
-              <li>Maksimum <strong>300 peserta</strong> per batch</li>
-            </ul>
-            <button class="dl-tpl-btn" onclick="downloadTemplate()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download Template Excel
-            </button>
+        </div>
+
+        <!-- Tab Manual -->
+        <div class="tab-pane" id="tab-manual">
+          <div class="manual-form">
+            <div class="f-group">
+              <label class="f-label">Nama</label>
+              <input id="mNama" class="f-input" type="text" placeholder="Nama lengkap" onkeydown="if(event.key==='Enter')addManual()">
+            </div>
+            <div class="f-group">
+              <label class="f-label">Email</label>
+              <input id="mEmail" class="f-input" type="email" placeholder="email@domain.com" onkeydown="if(event.key==='Enter')addManual()">
+            </div>
+            <button class="btn-add-peserta" onclick="addManual()">+ Tambah</button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--nm-border);">
+          <div class="peserta-count" id="pesertaCount">Preview Peserta: 0</div>
+          <div id="pesertaBody">
+            <div class="peserta-empty">Belum ada peserta ditambahkan</div>
           </div>
         </div>
       </div>
 
-      <!-- Tab Manual -->
-      <div class="tab-pane" id="tab-manual">
-        <div class="manual-form">
-          <div class="f-group">
-            <label class="f-label">Nama</label>
-            <input id="mNama" class="f-input" type="text" placeholder="Nama lengkap" onkeydown="if(event.key==='Enter')addManual()">
-          </div>
-          <div class="f-group">
-            <label class="f-label">Email</label>
-            <input id="mEmail" class="f-input" type="email" placeholder="email@domain.com" onkeydown="if(event.key==='Enter')addManual()">
-          </div>
-          <button class="btn-add-peserta" onclick="addManual()">+ Tambah</button>
-        </div>
-      </div>
-
-      <!-- Preview -->
-      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--nm-border);">
-        <div class="peserta-count" id="pesertaCount">Preview Peserta: 0</div>
-        <div id="pesertaBody">
-          <div class="peserta-empty">Belum ada peserta ditambahkan</div>
-        </div>
+      <!-- ─── Actions ─── -->
+      <div class="form-actions">
+        <button class="btn-reset" onclick="resetKandidatForm()">Reset Form</button>
+        <button class="btn-submit" onclick="submitForm()">Assign &amp; Kirim Undangan</button>
       </div>
     </div>
 
-    <!-- ─── Actions ─── -->
-    <div class="form-actions">
-      <button class="btn-reset" onclick="resetForm()">Reset Form</button>
-      <button class="btn-submit" onclick="submitForm()">Assign &amp; Kirim Undangan</button>
+    <!-- ═══════════════════ TAB: ASSIGNMENT ASESOR ═══════════════════ -->
+    <div id="panel-asesor" hidden>
+
+      <!-- ─── 1 · Pilih Batch ─── -->
+      <div class="card" id="card1">
+        <div class="card-title">
+          <span class="step-num">1</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Pilih Batch
+        </div>
+        <div class="card-note">
+          Penugasan ke asesor hanya bisa dilakukan untuk batch yang kandidatnya sudah menyelesaikan interview
+          <b>dan</b> report by AI-nya sudah siap. Batch yang belum siap tidak dapat dipilih.
+        </div>
+        <div class="card-tools">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="b-q" placeholder="Cari nama batch…" oninput="renderAsesorAll()">
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="bf-all" onclick="setBatchFilter('')">Semua</button>
+            <button class="toggle-btn" id="bf-ready" onclick="setBatchFilter('ready')">Siap di-assign</button>
+          </div>
+        </div>
+        <div class="pick-list" id="batch-list"></div>
+      </div>
+
+      <!-- ─── 2 · Pilih Kandidat ─── -->
+      <div class="card" id="card2">
+        <div class="card-title">
+          <span class="step-num">2</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Pilih Kandidat
+          <span class="ct-sub" id="c2-batch"></span>
+        </div>
+
+        <div id="c2-empty">
+          <div class="empty-state" style="margin-top:16px;">
+            <div class="empty-state-icon">🗂️</div>
+            <h2>Pilih batch terlebih dahulu</h2>
+            <p>Daftar kandidat beserta hasil report by AI-nya akan muncul setelah kamu memilih batch di langkah 1.</p>
+          </div>
+        </div>
+
+        <div id="c2-body" hidden>
+          <div class="card-tools">
+            <label class="chk-label">
+              <input type="checkbox" id="chk-all" onchange="toggleAll(this.checked)">
+              Pilih semua yang bisa ditugaskan
+            </label>
+            <span class="tool-count" id="c2-count"></span>
+            <div class="search-wrap" style="margin-left:auto;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="search" id="c-q" placeholder="Cari nama kandidat…" oninput="renderAsesorAll()">
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll">
+              <table>
+                <thead><tr>
+                  <th style="width:38px;"></th>
+                  <th>Kandidat</th>
+                  <th>Skor AI</th>
+                  <th>Report Siap</th>
+                  <th>Status</th>
+                </tr></thead>
+                <tbody id="cand-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── 3 · Asesor & Periode SLA ─── -->
+      <div class="card" id="card3">
+        <div class="card-title">
+          <span class="step-num">3</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+          Asesor &amp; Periode SLA
+        </div>
+        <div class="card-note">
+          Tulis nama dan email asesor yang akan memvalidasi kandidat terpilih. Satu asesor boleh ditugaskan
+          di beberapa batch sekaligus — penugasan lintas batch bisa dipantau di halaman
+          <a href="monitoring.html" class="link-sm">Monitoring</a>.
+        </div>
+
+        <div class="section-divider">Asesor</div>
+        <div class="f-row cols-2">
+          <div class="f-group">
+            <label class="f-label" for="f-asr-name">Nama Asesor <span>· wajib</span></label>
+            <input type="text" class="f-input" id="f-asr-name" list="asr-name-list" autocomplete="off"
+                   placeholder="Contoh: Dr. Rina Kusumawardani" oninput="onAssessorName(this.value)">
+            <datalist id="asr-name-list"></datalist>
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="f-asr-email">Email Asesor <span>· wajib</span></label>
+            <input type="email" class="f-input" id="f-asr-email" list="asr-email-list" autocomplete="off"
+                   placeholder="nama@assessor.id" oninput="onAssessorEmail(this.value)">
+            <datalist id="asr-email-list"></datalist>
+            <div class="f-hint bad" id="asr-email-hint" style="margin-top:2px;" hidden></div>
+          </div>
+        </div>
+        <div class="f-hint" id="asr-hint"></div>
+
+        <div class="section-divider">Periode SLA</div>
+        <div class="f-row cols-2">
+          <div class="f-group">
+            <label class="f-label" for="f-start">Tanggal Mulai</label>
+            <input type="date" class="f-input" id="f-start" onchange="onSla()" oninput="onSla()">
+          </div>
+          <div class="f-group">
+            <label class="f-label" for="f-due">Deadline <span>· mengikat SLA</span></label>
+            <input type="date" class="f-input" id="f-due" onchange="onSla()" oninput="onSla()">
+          </div>
+        </div>
+        <div class="f-hint" id="sla-hint"></div>
+
+        <div class="section-divider">Catatan untuk Asesor</div>
+        <div class="f-group">
+          <label class="f-label" for="f-note">Catatan <span>· opsional</span></label>
+          <textarea class="f-textarea" id="f-note" placeholder="Fokuskan review pada aspek Persuasi dan Negosiasi" oninput="onNote(this.value)"></textarea>
+        </div>
+      </div>
+
+      <!-- ─── Ringkasan penugasan + penugasan existing pada batch ini (satu container) ─── -->
+      <div class="sum-card">
+        <div class="sum-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+          Ringkasan Penugasan
+        </div>
+        <div id="sum-body"></div>
+
+        <div id="card4" hidden>
+          <div class="sum-divider">
+            <span>Penugasan pada Batch Ini</span>
+            <span id="c4-batch"></span>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll">
+              <table>
+                <thead><tr>
+                  <th>Asesor</th>
+                  <th>Kandidat</th>
+                  <th>Progress</th>
+                  <th>Periode SLA</th>
+                  <th>Status SLA</th>
+                  <th style="width:90px;"></th>
+                </tr></thead>
+                <tbody id="grp-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <a href="monitoring.html" class="link-sm">Lihat Monitoring →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Aksi form ─── -->
+      <div class="form-actions">
+        <button class="btn-reset" onclick="resetAsesorForm()">Reset</button>
+        <button class="btn-submit" id="btn-submit" onclick="submitAssign()" disabled>Tugaskan ke Asesor</button>
+      </div>
+
+      <div class="foot-row">
+        <button class="link-btn" onclick="resetDemoData()">Reset data demo</button>
+      </div>
     </div>
   </main>
 </div>
 
 <div id="toast"></div>
 
+<script src="../competency-data.js"></script>
+<script src="assessor-data.js"></script>
 <script>
+const $ = id => document.getElementById(id);
+const esc = s => AD.esc(s);
+
+/* ═════════ Tab halaman (Assignment Kandidat / Assignment Asesor) ═════════
+   Cari tombolnya sendiri lewat id (bukan menerima `this`) supaya bisa
+   dipanggil juga dari HTML yang di-generate lewat innerHTML (mis. tombol
+   di empty-state), tanpa perlu nested-quote yang gampang salah escape. */
+function switchMainTab(name) {
+  document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+  const btn = $('mtab-' + name);
+  if (btn) btn.classList.add('active');
+  $('panel-kandidat').hidden = name !== 'kandidat';
+  $('panel-asesor').hidden   = name !== 'asesor';
+  if (name === 'asesor') renderAsesorAll();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TAB: ASSIGNMENT KANDIDAT (form batch interview → localStorage
+   admin_assignment_v1, dipakai bersama oleh AD/assessor-data.js)
+   ═══════════════════════════════════════════════════════════ */
 const LS_ITEM   = 'admin_item_mgmt_v1';
 const LS_ASSIGN = 'admin_assignment_v1';
-let peserta    = [];
+let peserta     = [];
 let selClusters = new Set();
-
-window.addEventListener('DOMContentLoaded', () => {
-  buildTimeDropdowns();
-  loadClusters();
-  loadPakets();
-  document.getElementById('fPaket').addEventListener('change', onPaketChange);
-});
 
 function buildTimeDropdowns() {
   ['fJamMulaiH','fJamSelesaiH'].forEach(id => {
@@ -415,7 +728,7 @@ function loadClusters() {
     chip.className = 'chip';
     chip.dataset.id = cl.id;
     chip.style.cssText = `background:${theme.bg};border-color:${theme.border};color:${theme.text};`;
-    chip.innerHTML = `<svg class="chip-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${escHtml(cl.nama)}`;
+    chip.innerHTML = `<svg class="chip-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${esc(cl.nama)}`;
     chip.addEventListener('click', () => {
       if (selClusters.has(cl.id)) {
         selClusters.delete(cl.id);
@@ -468,10 +781,10 @@ function onPaketChange() {
     ? `${opt.dataset.count} item` : '';
 }
 
-/* ── Tabs ── */
+/* ── Sub-tab Excel/Manual ── */
 function switchTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#panel-kandidat .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#panel-kandidat .tab-pane').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
 }
@@ -568,8 +881,8 @@ function renderPeserta() {
   peserta.forEach((p, i) => {
     html += `<tr>
       <td style="color:#94a3b8;width:28px;">${i+1}</td>
-      <td>${escHtml(p.nama)}</td>
-      <td>${escHtml(p.email)}</td>
+      <td>${esc(p.nama)}</td>
+      <td>${esc(p.email)}</td>
       <td><button class="btn-del-row" onclick="removePeserta(${i})">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button></td>
@@ -614,7 +927,6 @@ function submitForm() {
       deadline: periodEnd,
       subdomain,
       clusters: [...selClusters],
-      asesor: [],
       nama: p.nama,
       email: p.email,
       wa: '',
@@ -630,10 +942,10 @@ function submitForm() {
 
   localStorage.setItem(LS_ASSIGN, JSON.stringify(db));
   toast(`${peserta.length} peserta berhasil di-assign!`);
-  setTimeout(() => resetForm(), 1500);
+  setTimeout(() => resetKandidatForm(), 1500);
 }
 
-function resetForm() {
+function resetKandidatForm() {
   document.getElementById('fNama').value = '';
   document.getElementById('fTglMulai').value = '';
   document.getElementById('fTglSelesai').value = '';
@@ -658,26 +970,562 @@ function genToken() {
   return Array.from({length:16}, () => c[Math.floor(Math.random()*c.length)]).join('');
 }
 
-/* ── Sidebar ── */
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+/* ═══════════════════════════════════════════════════════════
+   TAB: ASSIGNMENT ASESOR (semua data lewat AD (assessor-data.js))
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── state form ── */
+const S = {
+  batchId: null,
+  candIds: [],
+  assessorName: '',
+  assessorEmail: '',
+  slaStart: AD.offsetISO(0),
+  slaDue: AD.offsetISO(7),
+  note: '',
+  batchFilter: '',
+};
+
+/* view buffer — dipakai supaya handler onclick cukup mengirim index,
+   tidak perlu menyuntikkan id ke dalam atribut HTML.
+   `sug` = saran asesor dari penugasan sebelumnya (bukan master data). */
+const V = { batches: [], cands: [], groups: [], sug: [] };
+
+/* ── ikon kecil ── */
+const IC_WARN = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+const IC_INFO = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+/* ikon stat ringkasan penugasan — konsisten dgn ikon Card 1/2/3 */
+const IC_SUM = {
+  kandidat: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  batch: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  asesor: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  deadline: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>',
+};
+
+/* ── warna ── */
+function progColor(pct) {
+  if (pct === 0)  return '#f87171';
+  if (pct < 50)   return '#fbbf24';
+  if (pct < 100)  return '#60a5fa';
+  return '#34d399';
+}
+const READINESS_CLASS = { 'Siap': 'bd-green', 'Sebagian Siap': 'bd-amber', 'Belum Siap': 'bd-slate' };
+const SLA_CLASS = { done: 'bd-green', ontrack: 'bd-blue', atrisk: 'bd-amber', overdue: 'bd-red' };
+
+function bar(pct, color) {
+  return '<div class="prog-bar"><div class="prog-track"><div class="prog-fill" style="width:' + pct +
+         '%;background:' + color + ';"></div></div><span class="prog-pct">' + pct + '%</span></div>';
+}
+
+/* ── durasi SLA (pakai daysUntil supaya konsisten dengan data layer) ── */
+function slaDuration() {
+  const a = AD.daysUntil(S.slaStart);
+  const b = AD.daysUntil(S.slaDue);
+  if (a == null || b == null) return null;
+  return b - a;
+}
+
+/* ═════════ 1 · BATCH ═════════ */
+function setBatchFilter(f) {
+  S.batchFilter = f;
+  $('bf-all').classList.toggle('active', f === '');
+  $('bf-ready').classList.toggle('active', f === 'ready');
+  renderAsesorAll();
+}
+
+function batchDisableReason(b) {
+  if (b.readiness === 'Belum Siap') return 'Report AI belum tersedia — kandidat belum menyelesaikan interview';
+  if (b.assignableCount === 0)      return 'Semua kandidat sudah ditugaskan';
+  return null;
+}
+
+function renderBatches() {
+  const all = AD.batches();
+  const q   = ($('b-q').value || '').trim().toLowerCase();
+
+  let list = all;
+  if (q) list = list.filter(b =>
+    String(b.batchName).toLowerCase().includes(q) ||
+    String(b.paketName).toLowerCase().includes(q));
+  if (S.batchFilter === 'ready') list = list.filter(b => !batchDisableReason(b));
+
+  V.batches = list;
+
+  if (!all.length) {
+    $('batch-list').innerHTML =
+      '<div class="empty-state"><div class="empty-state-icon">📭</div>' +
+      '<h2>Belum ada batch kandidat</h2>' +
+      '<p>Buat assignment kandidat terlebih dahulu di tab Assignment Kandidat. Setelah kandidat menyelesaikan ' +
+      'interview dan report by AI terbit, batch-nya akan muncul di sini.</p>' +
+      `<button type="button" class="btn-outline-sm" onclick="switchMainTab('kandidat')">Ke Assignment Kandidat →</button></div>`;
+    return;
+  }
+  if (!list.length) {
+    const onlyFilter = S.batchFilter === 'ready' && !q;
+    $('batch-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>' +
+      (onlyFilter
+        ? '<h2>Tidak ada batch yang bisa di-assign</h2>' +
+          '<p>Setiap batch yang report AI-nya siap sudah ditugaskan seluruhnya, atau kandidatnya ' +
+          'belum menyelesaikan interview. Pilih filter “Semua” untuk melihat statusnya.</p>'
+        : '<h2>Tidak ada batch yang cocok</h2>' +
+          '<p>Ubah kata kunci pencarian atau pilih filter “Semua”.</p>') +
+      '</div>';
+    return;
+  }
+
+  $('batch-list').innerHTML = list.map((b, i) => {
+    const reason = batchDisableReason(b);
+    const pct    = b.total ? Math.round((b.reportReady / b.total) * 100) : 0;
+    const sel    = S.batchId === b.id;
+
+    const inner =
+      '<div class="pick-top"><div>' +
+        '<div class="pick-name">' + esc(b.batchName) + '</div>' +
+        '<div class="pick-meta">' + esc(b.paketName) + ' · ' +
+          esc(AD.fmtDate(b.periodStart)) + ' – ' + esc(AD.fmtDate(b.periodEnd)) + '</div>' +
+      '</div>' +
+      '<span class="status-badge ' + (READINESS_CLASS[b.readiness] || 'bd-slate') + '">' +
+        esc(b.readiness) + '</span></div>' +
+      '<div class="pick-stats">' + b.total + ' kandidat · ' + b.reportReady + ' report AI siap · ' +
+        b.assignedCount + ' sudah ditugaskan · <b>' + b.assignableCount + ' bisa ditugaskan</b></div>' +
+      '<div style="margin-top:8px;">' + bar(pct, progColor(pct)) + '</div>' +
+      (reason ? '<div class="pick-reason">' + IC_WARN + '<span>' + esc(reason) + '</span></div>' : '');
+
+    // Batch yang bisa ditugaskan → kartu radio biasa.
+    if (!reason) {
+      return '<button type="button" class="pick-card' + (sel ? ' sel' : '') +
+        '" onclick="pickBatch(' + i + ')">' + inner + '</button>';
+    }
+
+    // Batch terkunci. Kalau sudah punya penugasan, admin tetap harus bisa
+    // membukanya untuk memonitor / membatalkan grup (tanpa itu batch yang
+    // 100% ter-assign jadi tidak bisa disentuh sama sekali).
+    const review = b.assignedCount > 0
+      ? '<button type="button" class="review-link" onclick="reviewBatch(' + i + ')">' +
+        'Lihat penugasan batch ini →</button>'
+      : '';
+    return '<div class="pick-card dis' + (sel ? ' sel' : '') + '">' + inner + review + '</div>';
+  }).join('');
+}
+
+function pickBatch(i) {
+  const b = V.batches[i];
+  if (!b || b.id === S.batchId) return;
+  S.batchId = b.id;
+  S.candIds = [];
+  renderAsesorAll();
+}
+
+/** buka batch terkunci dalam mode tinjau saja (kandidat tidak bisa dicentang) */
+function reviewBatch(i) {
+  const b = V.batches[i];
+  if (!b) return;
+  S.batchId = b.id;
+  S.candIds = [];
+  renderAsesorAll();
+}
+
+/* ═════════ 2 · KANDIDAT ═════════ */
+function assignedMap(batchId) {
+  const map = {};
+  AD.readTasks().forEach(t => { if (t.batchId === batchId) map[t.candidateId] = t.assessorName; });
+  return map;
+}
+
+function avgChip(avg) {
+  const cls = avg >= 4 ? 'bd-green' : (avg >= 3 ? 'bd-blue' : 'bd-amber');
+  return '<span class="status-badge ' + cls + '">avg ' + esc(avg) + '</span>';
+}
+
+function renderCandidates(batch) {
+  if (!batch) {
+    $('c2-empty').hidden = false;
+    $('c2-body').hidden  = true;
+    $('c2-batch').textContent = '';
+    V.cands = [];
+    return;
+  }
+  $('c2-empty').hidden = true;
+  $('c2-body').hidden  = false;
+  $('c2-batch').textContent = batch.batchName;
+
+  const assigned = assignedMap(batch.id);
+  const q = ($('c-q').value || '').trim().toLowerCase();
+  let rows = batch.candidates;
+  if (q) rows = rows.filter(c =>
+    String(c.nama).toLowerCase().includes(q) ||
+    String(c.email || '').toLowerCase().includes(q));
+
+  V.cands = rows;
+
+  const pickedSet   = new Set(S.candIds);
+  const visPickable = rows.filter(c => !assigned[c.id] && c.aiReport && c.aiReport.ready);
+  const visPicked   = visPickable.filter(c => pickedSet.has(c.id)).length;
+
+  $('c2-count').innerHTML = '<b>' + S.candIds.length + '</b> dari <b>' + batch.assignableCount +
+                            '</b> kandidat dipilih';
+  const chkAll = $('chk-all');
+  chkAll.disabled      = visPickable.length === 0;
+  chkAll.checked       = visPickable.length > 0 && visPicked === visPickable.length;
+  chkAll.indeterminate = visPicked > 0 && visPicked < visPickable.length;
+
+  if (!rows.length) {
+    $('cand-tbody').innerHTML = '<tr><td colspan="5" class="empty">Tidak ada kandidat yang cocok dengan pencarian.</td></tr>';
+    return;
+  }
+
+  $('cand-tbody').innerHTML = rows.map((c, i) => {
+    const asr    = assigned[c.id] || null;
+    const ready  = !!(c.aiReport && c.aiReport.ready);
+    const canPick = ready && !asr;
+    const picked = pickedSet.has(c.id);
+
+    const skor = ready
+      ? c.aiReport.achieved + '/' + c.aiReport.total + ' aspek tercapai<div style="margin-top:4px;">' +
+        avgChip(c.aiReport.avgLevel) + '</div>'
+      : '<span class="muted">–</span>';
+
+    const rpt = ready
+      ? esc(AD.fmtDate(c.aiReport.generatedAt))
+      : '<span class="muted">belum siap</span>';
+
+    let status;
+    if (asr) {
+      status = '<span class="status-badge bd-slate">Ditugaskan ke ' + esc(asr) + '</span>';
+    } else if (!ready) {
+      status = '<span class="status-badge bd-slate">Report AI belum siap</span>' +
+               '<div class="cell-sub">status interview: ' + esc(c.status) + '</div>';
+    } else {
+      status = '<span class="status-badge bd-green">Siap divalidasi</span>';
+    }
+
+    return '<tr class="' + (canPick ? '' : 'row-dim') + '">' +
+      '<td><input type="checkbox"' + (canPick ? '' : ' disabled') + (picked ? ' checked' : '') +
+        ' onchange="toggleCand(' + i + ', this.checked)"></td>' +
+      '<td><div class="cell-name">' + esc(c.nama) + '</div>' +
+        '<div class="cell-sub">' + esc(c.email || '–') + '</div></td>' +
+      '<td class="cell-nowrap">' + skor + '</td>' +
+      '<td class="cell-nowrap" style="font-size:12px;color:var(--nm-muted-fg);">' + rpt + '</td>' +
+      '<td>' + status + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function toggleCand(i, on) {
+  const c = V.cands[i];
+  if (!c) return;
+  const set = new Set(S.candIds);
+  if (on) set.add(c.id); else set.delete(c.id);
+  S.candIds = Array.from(set);
+  renderAsesorAll();
+}
+
+function toggleAll(on) {
+  const batch = S.batchId ? AD.batchById(S.batchId) : null;
+  if (!batch) return;
+  const assigned = assignedMap(batch.id);
+  const set = new Set(S.candIds);
+  V.cands
+    .filter(c => !assigned[c.id] && c.aiReport && c.aiReport.ready)
+    .forEach(c => { if (on) set.add(c.id); else set.delete(c.id); });
+  S.candIds = Array.from(set);
+  renderAsesorAll();
+}
+
+/* ═════════ 3 · ASESOR & SLA ═════════
+   Platform belum punya master data asesor, jadi nama & email diisi bebas.
+   `AD.assessorSuggestions()` hanya riwayat pemakaian untuk <datalist>. */
+
+/* datalist dibangun ulang hanya kalau daftar sarannya benar-benar berubah,
+   supaya dropdown tidak tertutup sendiri tiap kali admin menekan tombol */
+let sugKey = null;
+function renderSuggestions() {
+  const sug = AD.assessorSuggestions();
+  V.sug = sug;
+  const key = sug.map(s => s.nama + '|' + s.email).join('~');
+  if (key === sugKey) return;
+  sugKey = key;
+  $('asr-name-list').innerHTML  = sug.map(s => '<option value="' + esc(s.nama)  + '"></option>').join('');
+  $('asr-email-list').innerHTML = sug.map(s => '<option value="' + esc(s.email) + '"></option>').join('');
+}
+
+function emailValid(v) { return AD.EMAIL_RE.test(String(v || '').trim()); }
+function assessorReady() { return !!(S.assessorName.trim() && emailValid(S.assessorEmail)); }
+
+/** isi field pasangannya dari saran — HANYA kalau field tujuan masih kosong */
+function onAssessorName(v) {
+  S.assessorName = v;
+  const k = v.trim().toLowerCase();
+  const hit = k ? V.sug.find(s => String(s.nama).trim().toLowerCase() === k) : null;
+  if (hit && !S.assessorEmail.trim()) {
+    S.assessorEmail = hit.email;
+    $('f-asr-email').value = hit.email;
+  }
+  renderAsesorAll();
+}
+
+function onAssessorEmail(v) {
+  S.assessorEmail = v;
+  const k = AD.assessorKey(v);
+  const hit = k ? V.sug.find(s => AD.assessorKey(s.email) === k) : null;
+  if (hit && !S.assessorName.trim()) {
+    S.assessorName = hit.nama;
+    $('f-asr-name').value = hit.nama;
+  }
+  renderAsesorAll();
+}
+
+function renderAssessorFields() {
+  renderSuggestions();
+
+  const bad  = $('asr-email-hint');
+  const em   = S.assessorEmail.trim();
+  const show = em !== '' && !emailValid(em);
+  bad.hidden = !show;
+  if (show) bad.textContent = 'Format email tidak valid — contoh: nama@assessor.id';
+
+  $('asr-hint').textContent = V.sug.length
+    ? 'Saran pada kedua field hanya diambil dari penugasan sebelumnya, bukan master data — ' +
+      'asesor baru boleh diisi langsung.'
+    : 'Belum ada riwayat penugasan, jadi belum ada saran. Isi nama dan email asesor secara manual.';
+}
+
+function onSla() {
+  S.slaStart = $('f-start').value;
+  S.slaDue   = $('f-due').value;
+  renderAsesorAll();
+}
+function onNote(v) { S.note = v; }
+
+function renderSla() {
+  const hint = $('sla-hint');
+  $('f-due').min = S.slaStart || '';
+  if (!S.slaStart) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Tanggal mulai wajib diisi — periode SLA butuh titik awal yang jelas.';
+    return;
+  }
+  if (!S.slaDue) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Deadline wajib diisi — asesor perlu batas waktu yang mengikat SLA.';
+    return;
+  }
+  const dur = slaDuration();
+  if (dur != null && dur < 0) {
+    hint.className = 'f-hint bad';
+    hint.textContent = 'Deadline tidak boleh sebelum tanggal mulai.';
+    return;
+  }
+  hint.className = 'f-hint';
+  hint.textContent = 'Durasi SLA ' + (dur == null ? '–' : dur) + ' hari · deadline ' + AD.fmtDate(S.slaDue);
+}
+
+/* ═════════ Ringkasan + submit ═════════ */
+function formReady() {
+  const dur = slaDuration();
+  return !!(S.batchId && S.candIds.length && assessorReady() && S.slaStart && S.slaDue && dur != null && dur >= 0);
+}
+
+function renderSummary(batch) {
+  const el  = $('sum-body');
+  const btn = $('btn-submit');
+  const ok  = formReady();
+  btn.disabled = !ok;
+
+  if (ok) {
+    const dur  = slaDuration();
+    const name = S.assessorName.trim();
+    const mail = S.assessorEmail.trim();
+    el.innerHTML =
+      '<div class="sum-stats">' +
+        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.kandidat + '</span><div><div class="sum-stat-val">' + S.candIds.length + ' kandidat</div><div class="sum-stat-sub">dipilih untuk validasi</div></div></div>' +
+        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.batch + '</span><div><div class="sum-stat-val">' + esc(batch ? batch.batchName : '–') + '</div><div class="sum-stat-sub">' + esc(batch ? batch.paketName : '') + '</div></div></div>' +
+        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.asesor + '</span><div><div class="sum-stat-val">' + esc(name) + '</div><div class="sum-stat-sub">' + esc(mail) + '</div></div></div>' +
+        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.deadline + '</span><div><div class="sum-stat-val">' + esc(AD.fmtDate(S.slaDue)) + '</div><div class="sum-stat-sub">' + (dur == null ? 'deadline SLA' : 'durasi ' + dur + ' hari') + '</div></div></div>' +
+      '</div>';
+    return;
+  }
+
+  // batch terkunci yang dibuka dalam mode tinjau: jelaskan jalan keluarnya
+  if (batch && batch.assignableCount === 0) {
+    el.innerHTML = '<div class="sum-notice warn">' + IC_WARN +
+      '<span>Batch <b>' + esc(batch.batchName) + '</b> tidak punya kandidat yang bisa ditugaskan — seluruh report AI ' +
+      'yang siap sudah dipegang asesor. Batalkan salah satu penugasan di bawah untuk membebaskan kandidat, atau pilih batch lain.</span></div>';
+    return;
+  }
+
+  const miss = [];
+  if (!S.batchId)          miss.push('pilih batch');
+  if (!S.candIds.length)   miss.push('pilih minimal 1 kandidat');
+  if (!S.assessorName.trim()) miss.push('isi nama asesor');
+  const em = S.assessorEmail.trim();
+  if (!em)                 miss.push('isi email asesor');
+  else if (!emailValid(em)) miss.push('perbaiki format email asesor');
+  if (!S.slaStart)         miss.push('isi tanggal mulai');
+  if (!S.slaDue)           miss.push('isi deadline SLA');
+  const dur = slaDuration();
+  if (S.slaStart && S.slaDue && dur != null && dur < 0) miss.push('perbaiki deadline yang lebih awal dari tanggal mulai');
+
+  el.innerHTML = '<div class="sum-notice">' + IC_INFO +
+    '<span>Belum lengkap — ' + miss.map(m => '<span class="miss-tag">' + esc(m) + '</span>').join(' ') + '</span></div>';
+}
+
+function submitAssign() {
+  if (!formReady()) return;
+  const res = AD.assign({
+    batchId: S.batchId,
+    candidateIds: S.candIds.slice(),
+    assessorName: S.assessorName,
+    assessorEmail: S.assessorEmail,
+    slaStart: S.slaStart,
+    slaDue: S.slaDue,
+    note: S.note,
+  });
+  toast(res.msg);
+  if (res.ok) {
+    // batch dipertahankan supaya admin bisa langsung menugaskan kelompok berikutnya
+    S.candIds       = [];
+    S.assessorName  = '';
+    S.assessorEmail = '';
+    S.note          = '';
+    $('f-asr-name').value  = '';
+    $('f-asr-email').value = '';
+    $('f-note').value      = '';
+  }
+  renderAsesorAll();
+}
+
+function resetAsesorForm() {
+  S.batchId       = null;
+  S.candIds       = [];
+  S.assessorName  = '';
+  S.assessorEmail = '';
+  S.note          = '';
+  S.slaStart      = AD.offsetISO(0);
+  S.slaDue        = AD.offsetISO(7);
+  $('f-asr-name').value  = '';
+  $('f-asr-email').value = '';
+  $('f-note').value  = '';
+  $('f-start').value = S.slaStart;
+  $('f-due').value   = S.slaDue;
+  $('b-q').value     = '';
+  $('c-q').value     = '';
+  setBatchFilter('');
+  toast('Form direset');
+}
+
+/* ═════════ 4 · Penugasan pada batch ini ═════════ */
+function renderExisting(batch) {
+  if (!batch) { $('card4').hidden = true; V.groups = []; return; }
+  $('card4').hidden = false;
+  $('c4-batch').textContent = batch.batchName;
+
+  const gs = AD.groups().filter(g => g.batchId === batch.id);
+  V.groups = gs;
+
+  if (!gs.length) {
+    $('grp-tbody').innerHTML = '<tr><td colspan="6" class="empty">Belum ada penugasan untuk batch ini.</td></tr>';
+    return;
+  }
+
+  $('grp-tbody').innerHTML = gs.map((g, i) =>
+    '<tr>' +
+      '<td><div class="cell-name">' + esc(g.assessorName) + '</div>' +
+        '<div class="cell-sub">' + esc(g.assessorEmail || '–') + '</div>' +
+        '<div class="cell-sub">ditugaskan ' + esc(AD.fmtDate(g.assignedAt)) + '</div></td>' +
+      '<td>' + g.total + ' kandidat</td>' +
+      '<td>' + bar(g.pct, progColor(g.pct)) +
+        '<div class="cell-sub">' + g.done + '/' + g.total + ' selesai' +
+        (g.review ? ' · ' + g.review + ' direview' : '') + '</div></td>' +
+      '<td style="font-size:12px;">' + esc(AD.fmtDate(g.slaStart)) + ' – ' + esc(AD.fmtDate(g.slaDue)) + '</td>' +
+      '<td><span class="status-badge ' + (SLA_CLASS[g.sla.key] || 'bd-slate') + '">' + esc(g.sla.label) + '</span>' +
+        '<div class="cell-sub">' + esc(AD.slaCountdown(g.sla)) + '</div></td>' +
+      '<td><button class="btn-row-danger" onclick="askCancel(' + i + ')">Batalkan</button></td>' +
+    '</tr>').join('');
+}
+
+function askCancel(i) {
+  const g = V.groups[i];
+  if (!g) return;
+  const yes = confirm('Batalkan penugasan ' + g.total + ' kandidat kepada ' + g.assessorName + '?\\n' +
+                      'Tugas validasi yang sudah dikerjakan akan ikut terhapus.');
+  if (!yes) return;
+  const n = AD.cancelGroup(g.groupId);
+  toast(n + ' tugas validasi dibatalkan');
+  renderAsesorAll();
+}
+
+/* ═════════ Render utama tab Asesor ═════════ */
+function renderAsesorAll() {
+  let batch = S.batchId ? AD.batchById(S.batchId) : null;
+  if (S.batchId && !batch) { S.batchId = null; S.candIds = []; }
+
+  // buang pilihan kandidat yang sudah tidak assignable (mis. setelah submit / reset demo)
+  if (batch) {
+    const ok = new Set(batch.assignable.map(c => c.id));
+    S.candIds = S.candIds.filter(id => ok.has(id));
+  } else {
+    S.candIds = [];
+  }
+
+  renderBatches();
+  renderCandidates(batch);
+  renderAssessorFields();
+  renderSla();
+  renderSummary(batch);
+  renderExisting(batch);
+
+  $('card2').classList.toggle('step-locked', !batch);
+  $('card3').classList.toggle('step-locked', S.candIds.length === 0);
+}
+
+/* ═════════ Demo data ═════════ */
+function resetDemoData() {
+  AD.resetDemo();
+  AD.ensureData();
+  S.batchId       = null;
+  S.candIds       = [];
+  S.assessorName  = '';
+  S.assessorEmail = '';
+  $('f-asr-name').value  = '';
+  $('f-asr-email').value = '';
+  renderAsesorAll();
+  toast('Data demo direset');
+}
+
+/* ═════════ Sidebar / toast (dipakai kedua tab) ═════════ */
+function toggleSidebar() { $('sidebar').classList.toggle('collapsed'); }
 function toggleSection(el) {
   const items = el.nextElementSibling;
   const chev  = el.querySelector('.sb-chevron');
   const open  = chev.classList.toggle('open');
   items.style.display = open ? '' : 'none';
 }
-
-/* ── Toast ── */
 function toast(msg, dur = 2800) {
-  const el = document.getElementById('toast');
+  const el = $('toast');
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(el._t);
   el._t = setTimeout(() => el.classList.remove('show'), dur);
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* ═════════ Init ═════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  buildTimeDropdowns();
+  loadClusters();
+  loadPakets();
+  document.getElementById('fPaket').addEventListener('change', onPaketChange);
+});
+
+AD.ensureData();
+$('f-start').value = S.slaStart;
+$('f-due').value   = S.slaDue;
+renderAsesorAll();
+
+// buka tab Asesor langsung kalau diakses via assignment.html#asesor
+// (mis. tautan "+ Assign Asesor" dari halaman Monitoring)
+if (location.hash === '#asesor') {
+  switchMainTab('asesor');
 }
 </script>
 </body>
