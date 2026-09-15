@@ -144,36 +144,10 @@
   .dot-active { background: #3b82f6; }
   .dot-idle   { background: #cbd5e1; }
 
-  /* modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; display: flex; align-items: center; justify-content: center; }
-  .modal-box { background: #fff; border-radius: 12px; width: 520px; max-width: 95vw; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--nm-border); }
-  .modal-header h3 { font-size: 15px; font-weight: 700; margin: 0; }
-  .modal-close { width: 28px; height: 28px; border: none; background: #f1f5f9; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: #64748b; }
-  .modal-close:hover { background: #e2e8f0; }
-  .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
-  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--nm-border); display: flex; gap: 8px; justify-content: flex-end; }
-
-  /* asesor status table in modal */
+  /* asesor status row (dipakai di mini-table dalam expand row) */
   .asesor-status-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--nm-border); }
   .asesor-status-row:last-child { border-bottom: 0; }
   .asesor-status-info { display: flex; align-items: center; gap: 10px; }
-  .asesor-status-progress { font-size: 11px; color: var(--nm-muted-fg); text-align: right; }
-  .asesor-remove-btn { width: 24px; height: 24px; border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
-  .asesor-remove-btn:hover { background: #fca5a5; }
-  .asesor-add-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; margin-top: 16px; }
-  .f-group { display: flex; flex-direction: column; gap: 4px; position: relative; }
-  .f-label { font-size: 11px; font-weight: 500; color: var(--nm-muted-fg); }
-  .f-input { padding: 7px 10px; border: 1px solid var(--nm-border); border-radius: 6px; font-family: inherit; font-size: 13px; }
-  .f-input:focus { outline: none; box-shadow: 0 0 0 2px #bfdbfe; }
-  .btn-add-asesor { padding: 7px 14px; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: #0f172a; color: #fff; white-space: nowrap; height: fit-content; }
-  .btn-add-asesor:hover { background: #1e293b; }
-
-  /* combobox dropdown */
-  .asesor-combo-dd { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--nm-border); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,.1); z-index: 50; margin-top: 2px; max-height: 160px; overflow-y: auto; }
-  .asesor-combo-item { padding: 7px 10px; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; }
-  .asesor-combo-item:hover, .asesor-combo-item.active-dd { background: #eff6ff; }
-  .asesor-combo-item small { font-size: 10px; color: var(--nm-muted-fg); }
 
   @media (max-width: 700px) {
     .sidebar { width: 64px !important; }
@@ -231,10 +205,6 @@
           <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
           <span>Assignment Asesor</span>
         </a>
-        <a class="sb-item" href="assessor-monitoring.html">
-          <svg class="sb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><path d="m12 12 4-4"/><circle cx="12" cy="12" r="1.5"/></svg>
-          <span>Monitoring Validasi</span>
-        </a>
       </div>
     </div>
   </nav>
@@ -246,7 +216,7 @@
   <div class="page-head-row">
     <div>
       <div class="page-title">Monitoring</div>
-      <div class="page-sub">Pantau progres penyelesaian assessment per paket dan per kandidat</div>
+      <div class="page-sub">Pantau progres interview per batch, dan siapa asesor yang menilai</div>
     </div>
     <a href="assignment.html" class="btn btn-outline btn-sm" style="margin-top:4px;text-decoration:none;">+ Assign</a>
   </div>
@@ -256,7 +226,7 @@
 
   <div class="filter-bar">
     <div class="filter-group">
-      <span class="filter-label">Status Paket</span>
+      <span class="filter-label">Status Batch</span>
       <div class="toggle-group">
         <button class="toggle-btn active" data-filter="" onclick="setFilter(this)">Semua</button>
         <button class="toggle-btn" data-filter="active" onclick="setFilter(this)">Ada Progress</button>
@@ -264,10 +234,10 @@
       </div>
     </div>
     <div class="filter-group">
-      <span class="filter-label">Cari Paket</span>
+      <span class="filter-label">Cari Batch</span>
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="search" id="f-q" placeholder="Nama paket…" oninput="renderMonitoring()">
+        <input type="search" id="f-q" placeholder="Nama batch atau paket…" oninput="renderMonitoring()">
       </div>
     </div>
   </div>
@@ -277,7 +247,6 @@
       <table>
         <thead><tr>
           <th style="width:40px;">#</th>
-          <th>Paket</th>
           <th>Batch</th>
           <th>Total Kandidat</th>
           <th>Completed</th>
@@ -290,40 +259,23 @@
       </table>
     </div>
   </div>
+
+  <div style="margin-top:20px;text-align:right;">
+    <button type="button" onclick="resetDemo()" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--nm-muted-fg);font-family:inherit;text-decoration:underline;">Reset data demo</button>
+  </div>
 </main>
 </div>
 
 <script src="../competency-data.js"></script>
+<script src="assessor-data.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-const LS_ITEM='admin_item_mgmt_v1';
-const LS_ASSIGN='admin_assignment_v1';
-let DB, ASSIGN_DB;
-
-function loadDB(){
-  try{DB=JSON.parse(localStorage.getItem(LS_ITEM));}catch{}
-  if(!DB){
-    const aspects=Object.entries(FRAMEWORK.aspects).map(([code,a])=>({code,name:a.name,category:a.category,desc:'',levels:[...a.levels],status:'Aktif'}));
-    let iid=1;const items=[];
-    for(const role of['hunter','farmer'])for(const q of FRAMEWORK.questions[role])items.push({id:'Q'+String(iid++).padStart(3,'0'),aspect:q.aspect,text:q.text,tipe:'suara',durasi:120,ulang:2,status:'Aktif'});
-    const paket=['hunter','farmer'].map((rk,i)=>{const r=FRAMEWORK.roles[rk];return{id:'P'+(i+1),nama:r.label,versi:1,desc:'',status:'Published',locked:true,assigned:true,showResult:false,items:r.aspects.map(code=>{const it=items.find(x=>x.aspect===code&&FRAMEWORK.questions[rk].some(q=>q.aspect===code&&q.text===x.text));return{itemId:it.id,target:r.targets[code],bobot:r.weights[code]};})};});
-    DB={aspects,items,paket,seq:{item:iid,paket:3}};
-  }
-}
-/* Key admin_assignment_v1 ditulis sebagai ARRAY flat oleh assignment.html /
-   assignment-create.html, tapi halaman ini butuh bentuk {assignments,seq}.
-   Normalkan KEDUA bentuk saat baca saja — jangan menulis ulang localStorage. */
-function loadAssign(){
-  let raw=null;
-  try{raw=JSON.parse(localStorage.getItem(LS_ASSIGN));}catch{raw=null;}
-  if(Array.isArray(raw)){ASSIGN_DB={assignments:raw,seq:raw.length+1};}
-  else if(raw&&Array.isArray(raw.assignments)){ASSIGN_DB={assignments:raw.assignments,seq:raw.seq||raw.assignments.length+1};}
-  else{ASSIGN_DB={assignments:[],seq:1};}
-}
-
-function fmtDate(s){if(!s)return'–';const d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(s)?s+'T00:00:00':s);return isNaN(d)?'–':d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
+/* Data kandidat & paket dibaca lewat AD (assessor-data.js) — itu sudah
+   menormalkan bentuk admin_assignment_v1 (array flat vs {assignments,seq})
+   dan menyediakan nama paket dengan fallback. Jangan reimplementasi di sini. */
+const fmtDate=AD.fmtDate;
 
 function toggleSidebar(){$('sidebar').classList.toggle('collapsed');}
 function toggleSection(id){const el=$(id),chev=$('chev-'+id);if(!el)return;const h=el.style.display==='none';el.style.display=h?'':'none';if(chev)chev.classList.toggle('open',h);}
@@ -336,12 +288,12 @@ const KPI_ICONS={
   progress:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>`,
 };
 function renderKPI(){
-  const all=ASSIGN_DB.assignments;
-  const paketAktif=new Set(all.map(a=>a.paketId));
+  const all=AD.readCandidates();
+  const batchAktif=AD.batches().length;
   const completed=all.filter(a=>a.status==='Completed').length;
   const inprog=all.filter(a=>['Started','In Progress'].includes(a.status)).length;
   const stats=[
-    {label:'Paket Aktif',n:paketAktif.size,color:'kpi-slate',icon:'paket'},
+    {label:'Batch Aktif',n:batchAktif,color:'kpi-slate',icon:'paket'},
     {label:'Total Peserta',n:all.length,color:'kpi-blue',icon:'peserta'},
     {label:'Selesai',n:completed,color:'kpi-green',icon:'done'},
     {label:'On Progress',n:inprog,color:'kpi-blue',icon:'progress'},
@@ -362,33 +314,29 @@ function subStatus(s){const map={Assigned:'ss-assigned',Invited:'ss-invited',Sta
 /* expanded rows */
 let expandedId=null;
 
-/* -------- asesor helper -------- */
-const LS_ASESOR='admin_asesor_v1';
+/* -------- asesor helper --------
+   Progress asesor SEKARANG dari data asli (AD.batchRows()[].assessors —
+   dihitung dari task validasi sungguhan di admin_assessor_task_v1),
+   bukan lagi angka dummy hasil hash. Statusnya tetap disederhanakan jadi
+   3 label (Belum Mulai/Menilai/Selesai), bukan 4 status rinci punya AD. */
 const AVATARBG=['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
 function avatarBg(name){let h=0;for(const c of(name||''))h=(h*31+c.charCodeAt(0))&0xffffffff;return AVATARBG[Math.abs(h)%AVATARBG.length];}
 function initials(name){const p=(name||'').trim().split(/\s+/);return(p[0]?.[0]||'')+(p[1]?.[0]||'');}
 
-/* dummy progress per asesor per batch (seeded deterministically) */
-function asesorProgress(asesorNama, batchKey, totalKandidats){
-  let h=0;for(const c of(asesorNama+batchKey))h=(h*31+c.charCodeAt(0))&0xffffffff;
-  const rated=Math.abs(h)%( totalKandidats+1);
-  return {rated, total:totalKandidats};
-}
-function asesorStatusInfo(rated,total){
+function asesorStatusInfo(done,total){
   if(total===0)return{label:'–',dotCls:'dot-idle'};
-  if(rated===0)return{label:'Belum Mulai',dotCls:'dot-idle'};
-  if(rated>=total)return{label:'Selesai',dotCls:'dot-done'};
+  if(done===0)return{label:'Belum Mulai',dotCls:'dot-idle'};
+  if(done>=total)return{label:'Selesai',dotCls:'dot-done'};
   return{label:'Menilai',dotCls:'dot-active'};
 }
 
-/* render asesor column chips */
-function renderAsesorCol(asesorList, batchKey, totalCands){
-  if(!asesorList||!asesorList.length)return'<span class="muted" style="font-size:12px;">–</span>';
-  return`<div class="asesor-stack">${asesorList.map(a=>{
-    const {rated,total}=asesorProgress(a.nama,batchKey,totalCands);
-    const {dotCls}=asesorStatusInfo(rated,total);
+/* render asesor column chips — assessors: [{nama,email,total,done}] dari AD.batchRows() */
+function renderAsesorCol(assessors){
+  if(!assessors||!assessors.length)return'<span class="muted" style="font-size:12px;">–</span>';
+  return`<div class="asesor-stack">${assessors.map(a=>{
+    const {dotCls}=asesorStatusInfo(a.done,a.total);
     const bg=avatarBg(a.nama);
-    return`<span class="asesor-chip" title="${esc(a.nama)} · ${esc(a.email||'')}">
+    return`<span class="asesor-chip" title="${esc(a.nama)} · ${esc(a.email||'')} · ${a.done}/${a.total} dinilai">
       <span class="asesor-avatar" style="background:${bg};">${esc(initials(a.nama))}</span>
       <span>${esc(a.nama.split(' ')[0])}</span>
       <span class="asesor-dot ${dotCls}"></span>
@@ -397,18 +345,20 @@ function renderAsesorCol(asesorList, batchKey, totalCands){
 }
 
 /* render expanded asesor mini-table */
-function renderAsesorMiniTable(asesorList, batchKey, totalCands, paketId){
-  if(!asesorList||!asesorList.length)return`<div style="font-size:12px;color:var(--nm-muted-fg);padding:8px 12px;">Belum ada asesor ditambahkan.</div>`;
-  return`<div style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:12px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-bottom:1px solid var(--nm-border);">
+function renderAsesorMiniTable(assessors){
+  const header=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-bottom:1px solid var(--nm-border);">
       <span style="font-size:11px;font-weight:600;color:#374151;">Asesor Batch</span>
-      <button class="btn btn-sm btn-outline" style="font-size:11px;padding:3px 10px;" onclick="openKelola('${esc(paketId)}');event.stopPropagation();">✏️ Kelola Asesor</button>
-    </div>
-    ${asesorList.map(a=>{
-      const {rated,total}=asesorProgress(a.nama,batchKey,totalCands);
-      const {label,dotCls}=asesorStatusInfo(rated,total);
+      <a href="assessor-assignment.html" class="btn btn-sm btn-outline" style="font-size:11px;padding:3px 10px;text-decoration:none;" onclick="event.stopPropagation();">+ Assign Asesor</a>
+    </div>`;
+  if(!assessors||!assessors.length){
+    return`<div style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:12px;">${header}<div style="padding:16px;text-align:center;color:var(--nm-muted-fg);font-size:13px;">Belum ada asesor ditugaskan ke batch ini.</div></div>`;
+  }
+  return`<div style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:12px;">
+    ${header}
+    ${assessors.map(a=>{
+      const {label,dotCls}=asesorStatusInfo(a.done,a.total);
       const bg=avatarBg(a.nama);
-      const pct=total?Math.round(rated/total*100):0;
+      const pct=a.total?Math.round(a.done/a.total*100):0;
       return`<div class="asesor-status-row">
         <div class="asesor-status-info">
           <span class="asesor-avatar" style="background:${bg};width:28px;height:28px;font-size:11px;">${esc(initials(a.nama))}</span>
@@ -420,7 +370,7 @@ function renderAsesorMiniTable(asesorList, batchKey, totalCands, paketId){
         <div style="display:flex;align-items:center;gap:12px;">
           <div style="text-align:right;">
             <div style="display:flex;align-items:center;gap:5px;"><span class="asesor-dot ${dotCls}"></span><span style="font-size:12px;color:#374151;">${esc(label)}</span></div>
-            <div style="font-size:11px;color:var(--nm-muted-fg);">${rated}/${total} peserta</div>
+            <div style="font-size:11px;color:var(--nm-muted-fg);">${a.done}/${a.total} peserta</div>
           </div>
           <div class="prog-bar" style="width:80px;">
             <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${progColor(pct)};"></div></div>
@@ -433,70 +383,28 @@ function renderAsesorMiniTable(asesorList, batchKey, totalCands, paketId){
 
 function renderMonitoring(){
   const fq=($('f-q').value||'').toLowerCase();
-  const paketMap={};
-  ASSIGN_DB.assignments.forEach(a=>{
-    if(!paketMap[a.paketId])paketMap[a.paketId]=[];
-    paketMap[a.paketId].push(a);
-  });
-  let rows=DB.paket.filter(p=>paketMap[p.id]&&paketMap[p.id].length>0);
-  if(fq)rows=rows.filter(p=>p.nama.toLowerCase().includes(fq));
-  if(activeFilter==='active')rows=rows.filter(p=>{const cands=paketMap[p.id]||[];return cands.some(a=>!['Completed','Expired','Cancelled'].includes(a.status));});
-  if(activeFilter==='done')rows=rows.filter(p=>{const cands=paketMap[p.id]||[];return cands.length>0&&cands.every(a=>a.status==='Completed');});
+  let rows=AD.batchRows();
+  if(fq)rows=rows.filter(r=>r.batchName.toLowerCase().includes(fq)||r.paketName.toLowerCase().includes(fq));
+  if(activeFilter==='active')rows=rows.filter(r=>r.candidates.some(a=>!['Completed','Expired','Cancelled'].includes(a.status)));
+  if(activeFilter==='done')rows=rows.filter(r=>r.candidates.length>0&&r.candidates.every(a=>a.status==='Completed'));
 
-  if(!rows.length&&!ASSIGN_DB.assignments.length){
-    $('tb-monitor').innerHTML=`<tr><td colspan="9" style="padding:0;"><div class="empty-state"><div class="empty-state-icon">📊</div><h2>Belum ada data monitoring</h2><p>Buat assignment terlebih dahulu untuk mulai memantau progres.</p><a href="assignment.html" class="btn btn-primary btn-sm" style="text-decoration:none;">+ Buat Assignment</a></div></td></tr>`;return;
+  if(!rows.length&&!AD.readCandidates().length){
+    $('tb-monitor').innerHTML=`<tr><td colspan="8" style="padding:0;"><div class="empty-state"><div class="empty-state-icon">📊</div><h2>Belum ada data monitoring</h2><p>Buat assignment terlebih dahulu untuk mulai memantau progres.</p><a href="assignment.html" class="btn btn-primary btn-sm" style="text-decoration:none;">+ Buat Assignment</a></div></td></tr>`;return;
   }
-  if(!rows.length){$('tb-monitor').innerHTML=`<tr><td colspan="9" class="empty">Tidak ada paket ditemukan.</td></tr>`;return;}
+  if(!rows.length){$('tb-monitor').innerHTML=`<tr><td colspan="8" class="empty">Tidak ada batch ditemukan.</td></tr>`;return;}
 
-  $('tb-monitor').innerHTML=rows.map((p,i)=>{
-    const cands=paketMap[p.id]||[];
-    const total=cands.length;
-    const done=cands.filter(a=>a.status==='Completed').length;
-    const inprog=cands.filter(a=>['Started','In Progress'].includes(a.status)).length;
+  $('tb-monitor').innerHTML=rows.map((r,i)=>{
+    const total=r.total;
+    const done=r.completed;
+    const inprog=r.candidates.filter(a=>['Started','In Progress'].includes(a.status)).length;
     const pct=total?Math.round((done/total)*100):0;
-    const isExp=expandedId===p.id;
+    const isExp=expandedId===r.id;
 
-    // batch grouping
-    const batchGroups={};
-    cands.forEach(a=>{const k=a.batchName||'(tanpa batch)';if(!batchGroups[k])batchGroups[k]={asesor:a.asesor||[],cands:[]};batchGroups[k].cands.push(a);});
+    const subRows=r.candidates.map(a=>`<tr><td style="padding:10px 12px;">${esc(a.nama)}<br><span style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||a.wa||'–')}</span></td><td>${subStatus(a.status)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.deadline)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.updatedAt||a.createdAt)}</td></tr>`).join('');
 
-    // collect all unique asesor across all batches (deduped by email)
-    const asesorByEmail={};
-    Object.entries(batchGroups).forEach(([bName,bg])=>{
-      bg.asesor.forEach(a=>{
-        if(!asesorByEmail[a.email]){asesorByEmail[a.email]={...a,batches:[{bName,totalCands:bg.cands.length}]};}
-        else{asesorByEmail[a.email].batches.push({bName,totalCands:bg.cands.length});}
-      });
-    });
-    const allAsesor=Object.values(asesorByEmail);
-
-    const batches=[...new Set(cands.map(a=>a.batchName).filter(Boolean))];
-    const batchCell=batches.length?batches.map(b=>`<span style="display:block;font-size:12px;line-height:1.5;">${esc(b)}</span>`).join(''):'<span class="muted">–</span>';
-
-    const subRows=cands.map(a=>`<tr><td style="padding:10px 12px;">${esc(a.nama)}<br><span style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||a.wa||'–')}</span></td><td>${subStatus(a.status)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.deadline)}</td><td style="font-size:12px;color:var(--nm-muted-fg);">${fmtDate(a.updatedAt||a.createdAt)}</td></tr>`).join('');
-
-    const expandedAsesor=Object.entries(batchGroups).map(([bName,bg])=>renderAsesorMiniTable(bg.asesor,bName,bg.cands.length,p.id)).join('');
-
-    // render column: all unique asesor, aggregate progress across their batches
-    const colAsesorHtml=(()=>{
-      if(!allAsesor.length)return'<span class="muted" style="font-size:12px;">–</span>';
-      return`<div class="asesor-stack">${allAsesor.map(a=>{
-        const totalRated=a.batches.reduce((s,b)=>s+asesorProgress(a.nama,b.bName,b.totalCands).rated,0);
-        const totalAll=a.batches.reduce((s,b)=>s+b.totalCands,0);
-        const {dotCls}=asesorStatusInfo(totalRated,totalAll);
-        const bg=avatarBg(a.nama);
-        return`<span class="asesor-chip" title="${esc(a.nama)} · ${esc(a.email||'')}">
-          <span class="asesor-avatar" style="background:${bg};">${esc(initials(a.nama))}</span>
-          <span>${esc(a.nama.split(' ')[0])}</span>
-          <span class="asesor-dot ${dotCls}"></span>
-        </span>`;
-      }).join('')}</div>`;
-    })();
-
-    return`<tr class="expand-trigger" onclick="toggleRow('${p.id}')">
+    return`<tr class="expand-trigger" onclick="toggleRow('${jsq(r.id)}')">
       <td class="muted">${i+1}</td>
-      <td><b>${esc(p.nama)}</b></td>
-      <td>${batchCell}</td>
+      <td><b>${esc(r.batchName)}</b><br><span class="muted" style="font-size:11px;">${esc(r.paketName)}</span></td>
       <td>${total}</td>
       <td>${done} <span class="muted">(${pct}%)</span></td>
       <td>${inprog}</td>
@@ -506,12 +414,12 @@ function renderMonitoring(){
           <span class="prog-pct">${pct}%</span>
         </div>
       </td>
-      <td onclick="event.stopPropagation();">${colAsesorHtml}</td>
+      <td onclick="event.stopPropagation();">${renderAsesorCol(r.assessors)}</td>
       <td><span class="chevron ${isExp?'open':''}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></td>
     </tr>
-    <tr class="expand-row"><td colspan="9"><div class="expand-inner ${isExp?'open':''}">
+    <tr class="expand-row"><td colspan="8"><div class="expand-inner ${isExp?'open':''}">
       <div class="expand-content">
-        ${expandedAsesor}
+        ${renderAsesorMiniTable(r.assessors)}
         <table class="sub-table"><thead><tr><th>Kandidat</th><th>Status</th><th>Deadline</th><th>Update Terakhir</th></tr></thead>
         <tbody>${subRows}</tbody></table>
       </div>
@@ -520,144 +428,18 @@ function renderMonitoring(){
 }
 
 function toggleRow(id){expandedId=expandedId===id?null:id;renderMonitoring();}
+function jsq(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 
-/* -------- Modal Kelola Asesor -------- */
-let kelolapaketId=null;
-let kelolaAsesorList=[];
-let ddIdx=-1;
-
-function openKelola(paketId){
-  kelolapaketId=paketId;
-  const paketMap={};
-  ASSIGN_DB.assignments.forEach(a=>{if(!paketMap[a.paketId])paketMap[a.paketId]=[];paketMap[a.paketId].push(a);});
-  const cands=paketMap[paketId]||[];
-  kelolaAsesorList=JSON.parse(JSON.stringify((cands[0]&&cands[0].asesor)||[]));
-  renderKelolaModal();
-  $('modal-kelola').style.display='flex';
-}
-function closeKelola(){$('modal-kelola').style.display='none';}
-
-function renderKelolaModal(){
-  const totalCands=(()=>{const pm={};ASSIGN_DB.assignments.forEach(a=>{if(!pm[a.paketId])pm[a.paketId]=[];pm[a.paketId].push(a);});return(pm[kelolapaketId]||[]).length;})();
-  const firstBatch=(()=>{const pm={};ASSIGN_DB.assignments.forEach(a=>{if(!pm[a.paketId])pm[a.paketId]=a.batchName||'';});return pm[kelolapaketId]||'';})();
-  const listHtml=kelolaAsesorList.length?kelolaAsesorList.map((a,idx)=>{
-    const {rated,total}=asesorProgress(a.nama,firstBatch,totalCands);
-    const {label,dotCls}=asesorStatusInfo(rated,total);
-    const bg=avatarBg(a.nama);
-    return`<div class="asesor-status-row">
-      <div class="asesor-status-info">
-        <span class="asesor-avatar" style="background:${bg};width:28px;height:28px;font-size:11px;">${esc(initials(a.nama))}</span>
-        <div>
-          <div style="font-size:13px;font-weight:500;">${esc(a.nama)}</div>
-          <div style="font-size:11px;color:var(--nm-muted-fg);">${esc(a.email||'–')}</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="display:flex;align-items:center;gap:5px;"><span class="asesor-dot ${dotCls}"></span><span style="font-size:12px;">${esc(label)}</span></div>
-        <button class="asesor-remove-btn" onclick="removeKelolaAsesor(${idx})" title="Hapus">×</button>
-      </div>
-    </div>`;
-  }).join(''):`<div style="padding:16px;text-align:center;color:var(--nm-muted-fg);font-size:13px;">Belum ada asesor.</div>`;
-  $('kelola-asesor-list').innerHTML=listHtml;
-}
-
-function removeKelolaAsesor(idx){kelolaAsesorList.splice(idx,1);renderKelolaModal();}
-
-function kelolaAddAsesor(){
-  const nama=$('k-aNama').value.trim();
-  const email=$('k-aEmail').value.trim().toLowerCase();
-  if(!nama||!email){showToast('Isi nama dan email asesor');return;}
-  if(kelolaAsesorList.some(a=>a.email===email)){showToast('Asesor sudah ada');return;}
-  kelolaAsesorList.push({nama,email});
-  $('k-aNama').value='';$('k-aEmail').value='';
-  $('k-asesorDd').style.display='none';
-  renderKelolaModal();
-  saveAsesorHistoryKelola(nama,email);
-}
-
-function saveAsesorHistoryKelola(nama,email){
-  let hist=[];try{hist=JSON.parse(localStorage.getItem(LS_ASESOR))||[];}catch{}
-  hist=hist.filter(h=>h.email!==email);
-  hist.unshift({nama,email});
-  if(hist.length>50)hist=hist.slice(0,50);
-  localStorage.setItem(LS_ASESOR,JSON.stringify(hist));
-}
-
-function showKelolaDropdown(){
-  const q=$('k-aNama').value.toLowerCase();
-  let hist=[];try{hist=JSON.parse(localStorage.getItem(LS_ASESOR))||[];}catch{}
-  const filtered=hist.filter(h=>(!q||h.nama.toLowerCase().includes(q)||h.email.toLowerCase().includes(q))&&!kelolaAsesorList.some(a=>a.email===h.email));
-  const dd=$('k-asesorDd');
-  if(!filtered.length){dd.style.display='none';return;}
-  dd.innerHTML=filtered.map((h,i)=>`<div class="asesor-combo-item" onmousedown="pickKelolaAsesor('${esc(h.nama)}','${esc(h.email)}')">${esc(h.nama)}<small>${esc(h.email)}</small></div>`).join('');
-  dd.style.display='block';
-  ddIdx=-1;
-}
-function pickKelolaAsesor(nama,email){$('k-aNama').value=nama;$('k-aEmail').value=email;$('k-asesorDd').style.display='none';kelolaAddAsesor();}
-function handleKelolaKey(e){
-  const dd=$('k-asesorDd');const items=dd.querySelectorAll('.asesor-combo-item');
-  if(e.key==='ArrowDown'){e.preventDefault();ddIdx=Math.min(ddIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('active-dd',i===ddIdx));}
-  else if(e.key==='ArrowUp'){e.preventDefault();ddIdx=Math.max(ddIdx-1,0);items.forEach((el,i)=>el.classList.toggle('active-dd',i===ddIdx));}
-  else if(e.key==='Enter'){e.preventDefault();if(ddIdx>=0&&items[ddIdx]){items[ddIdx].dispatchEvent(new MouseEvent('mousedown'));}else kelolaAddAsesor();}
-  else if(e.key==='Escape'){dd.style.display='none';}
-}
-
-function saveKelola(){
-  if(!kelolaAsesorList.length){showToast('Minimal 1 asesor');return;}
-  // update all records for this paket
-  ASSIGN_DB.assignments.forEach(a=>{if(a.paketId===kelolapaketId)a.asesor=JSON.parse(JSON.stringify(kelolaAsesorList));});
-  // materialize to localStorage
-  if(!localStorage.getItem(LS_ASSIGN)||JSON.parse(localStorage.getItem(LS_ASSIGN)).assignments.length===0){
-    localStorage.setItem(LS_ASSIGN,JSON.stringify(ASSIGN_DB));
-  }else{
-    const stored=JSON.parse(localStorage.getItem(LS_ASSIGN));
-    stored.assignments.forEach(a=>{if(a.paketId===kelolapaketId)a.asesor=JSON.parse(JSON.stringify(kelolaAsesorList));});
-    localStorage.setItem(LS_ASSIGN,JSON.stringify(stored));
-  }
-  closeKelola();renderMonitoring();showToast('Asesor berhasil diperbarui');
-}
-
-/* toast */
+/* toast (dipakai tombol "Reset data demo") */
 function showToast(msg){
   let t=$('toast-msg');
   if(!t){t=document.createElement('div');t.id='toast-msg';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;pointer-events:none;';document.body.appendChild(t);}
   t.textContent=msg;t.style.opacity='1';clearTimeout(t._to);t._to=setTimeout(()=>{t.style.opacity='0';},2000);
 }
+function resetDemo(){AD.resetDemo();AD.ensureData();renderKPI();renderMonitoring();showToast('Data demo direset');}
 
-loadDB();loadAssign();renderKPI();renderMonitoring();
+AD.ensureData();renderKPI();renderMonitoring();
 </script>
 
-<!-- Modal Kelola Asesor -->
-<div id="modal-kelola" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeKelola()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>Kelola Asesor</h3>
-      <button class="modal-close" onclick="closeKelola()">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--nm-muted-fg);margin:0 0 12px;">Asesor yang bertugas menilai kandidat dalam batch ini.</p>
-      <div id="kelola-asesor-list" style="border:1px solid var(--nm-border);border-radius:8px;overflow:hidden;margin-bottom:16px;"></div>
-      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;">Tambah Asesor</div>
-      <div class="asesor-add-row">
-        <div class="f-group">
-          <label class="f-label">Nama Asesor</label>
-          <input id="k-aNama" class="f-input" type="text" placeholder="Nama lengkap" autocomplete="off"
-            oninput="showKelolaDropdown()" onfocus="showKelolaDropdown()" onkeydown="handleKelolaKey(event)" onblur="setTimeout(()=>{$('k-asesorDd').style.display='none';},150)">
-          <div id="k-asesorDd" class="asesor-combo-dd" style="display:none;"></div>
-        </div>
-        <div class="f-group">
-          <label class="f-label">Email</label>
-          <input id="k-aEmail" class="f-input" type="email" placeholder="email@domain.com"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();kelolaAddAsesor();}">
-        </div>
-        <button class="btn-add-asesor" type="button" onclick="kelolaAddAsesor()">+ Tambah</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeKelola()">Batal</button>
-      <button class="btn btn-primary" onclick="saveKelola()">Simpan Perubahan</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
