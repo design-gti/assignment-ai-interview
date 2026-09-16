@@ -5,7 +5,7 @@
 > ada di prototype, dan setiap langkah yang **belum** terimplementasi ditandai eksplisit
 > di [Bagian 10 — Gap Implementasi](#10-gap-implementasi).
 
-**Versi:** 1.0 · **Tanggal:** 15 September 2026 · **Status prototype:** HTML statis, state di `localStorage`, tanpa backend
+**Versi:** 1.1 · **Tanggal:** 16 September 2026 · **Status prototype:** HTML statis, state di `localStorage`, tanpa backend
 
 ---
 
@@ -279,9 +279,9 @@ Semua kandidat dengan `paketId` + `batchName` yang sama dianggap satu batch.
 
 ### Langkah admin
 
-**Kartu 1 — Pilih Batch.** Daftar batch beserta badge kesiapan; yang masih punya kandidat siap-tugas naik ke atas.
+**Kartu 1 — Pilih Batch.** List satu kolom (bukan grid) berisi batch beserta badge kesiapan; yang masih punya kandidat siap-tugas naik ke atas. Setiap baris merangkum progresnya sebagai satu angka **`X/Y ditugaskan`** (X = kandidat yang sudah ditugaskan, Y = kandidat yang report AI-nya sudah siap) — tanpa merinci "report AI siap" sebagai angka terpisah. Kalau batch lebih dari 10, list-nya berpindah halaman (10 batch/halaman); mengetik di kolom pencarian otomatis mengembalikan ke halaman pertama.
 
-**Kartu 2 — Pilih Kandidat.** Hanya menampilkan kandidat yang `aiReport.ready === true` **dan** belum pernah ditugaskan di batch tersebut. Tersedia pilih-semua dan ringkasan skor AI (`avgLevel`, `achieved/total`) per kandidat sebagai bahan pertimbangan.
+**Kartu 2 — Pilih Kandidat.** Hanya menampilkan kandidat yang `aiReport.ready === true` **dan** belum pernah ditugaskan di batch tersebut. Tersedia pilih-semua; kolom yang tampil per kandidat adalah nama, tanggal **Interview Selesai** (`aiReport.generatedAt`), dan status (siap divalidasi / sudah ditugaskan ke siapa / report belum siap) — tidak ada kolom skor AI di sini, supaya keputusan menugaskan tidak bias oleh angka AI sebelum divalidasi.
 
 **Kartu 3 — Asesor & SLA.**
 
@@ -291,7 +291,6 @@ Semua kandidat dengan `paketId` + `batchName` yang sama dianggap satu batch.
 | Email Asesor | ✅ | Divalidasi format; **email inilah identitas asesor** |
 | Tanggal Mulai | ✅ | Default hari ini |
 | Deadline SLA | ✅ | Default +7 hari; tidak boleh sebelum tanggal mulai |
-| Catatan | — | Instruksi bebas untuk asesor |
 
 > ⚠️ **Penting:** platform belum punya master data / registry asesor. Karena itu asesor
 > **tidak punya `id`** — identitasnya adalah email (dinormalkan lowercase) dan namanya
@@ -324,13 +323,16 @@ Satu kali submit = satu **`groupId`** + N **task** (`VT1`, `VT2`, …), satu tas
   candidateId, candidateName, candidateEmail,
   aiSummary: { achieved, total, avgLevel },   // snapshot skor AI saat ditugaskan
   status: 'Menunggu',
-  assignedAt, slaStart, slaDue, note,
+  assignedAt, slaStart, slaDue,
+  note: '',   // form Assignment Asesor sudah tidak punya field Catatan — AD.assign() masih menerima note kalau dipanggil langsung
   startedAt: null, validatedAt: null, revisedAspects: 0,
   log: [{ ts, msg: 'Ditugaskan ke … · deadline …' }]
 }
 ```
 
-Setelah sukses, **batch tetap terpilih** supaya admin bisa langsung menugaskan kelompok berikutnya ke asesor lain; field kandidat, asesor, dan catatan direset.
+Setelah sukses, **batch tetap terpilih** supaya admin bisa langsung menugaskan kelompok berikutnya ke asesor lain; field kandidat dan asesor direset.
+
+Halaman Assignment sendiri **tidak lagi menampilkan daftar penugasan yang sudah ada** pada suatu batch (dulu ada kartu "Penugasan pada Batch Ini" + link "Lihat penugasan batch ini →" untuk batch terkunci — keduanya sudah dihapus). Untuk memantau atau melihat progres penugasan, admin cek langsung ke **Monitoring**. Konsekuensinya: kemampuan membatalkan grup penugasan (`AD.cancelGroup()`) jadi tidak punya pemicu UI di halaman manapun untuk saat ini — lihat Gap #9.
 
 **Output fase ini:** N task validasi berstatus `Menunggu` dengan SLA melekat.
 
@@ -386,14 +388,16 @@ Teks countdown: *"3 hari lagi"* / *"jatuh tempo hari ini"* / *"lewat 2 hari"* / 
 
 Diturunkan otomatis di `AD.batchRows()` — **bukan** field yang disimpan:
 
-| Status | Syarat |
-|---|---|
-| **Belum Siap** | `reportReady === 0` — belum ada report AI sama sekali |
-| **Belum Discoring** | Report AI siap, tapi belum ada task asesor sama sekali |
-| **Sedang Discoring** | Ada task, tapi belum semuanya selesai (atau masih ada report siap yang belum ditugaskan) |
-| **Selesai Discoring** | Semua task selesai **dan** jumlah task = jumlah report siap |
+| Status internal | Syarat | Label yang tampil di kartu |
+|---|---|---|
+| **Belum Siap** | `reportReady === 0` — belum ada report AI sama sekali | "Belum Discoring" |
+| **Belum Discoring** | Report AI siap, tapi belum ada task asesor sama sekali | "Belum Discoring" |
+| **Sedang Discoring** | Ada task, tapi belum semuanya selesai (atau masih ada report siap yang belum ditugaskan) | "Sedang Discoring" |
+| **Selesai Discoring** | Semua task selesai **dan** jumlah task = jumlah report siap | "Selesai Discoring" |
 
-Urutan kartu: batch **overdue** dulu → Sedang Discoring → Belum Discoring → Belum Siap → Selesai Discoring terakhir.
+`Belum Siap` dan `Belum Discoring` sengaja ditampilkan dengan **label yang sama** — dari sudut pandang admin keduanya sama-sama berarti "batch ini belum discoring", bedanya cuma kenapa (report belum ada vs report ada tapi belum ada asesor). Ini murni penyesuaian tampilan di `monitoring.html` (fungsi `scoringLabel()`); nilai `AD.SCORING.BELUM_SIAP` di data layer **tidak diubah**, supaya urutan sortir kartu di bawah ini tetap benar.
+
+Urutan kartu: batch **overdue** dulu → Sedang Discoring → Belum Discoring → Belum Siap → Selesai Discoring terakhir (urutan ini berdasarkan status internal, bukan label yang tampil).
 
 ### Isi kartu batch
 
@@ -405,7 +409,7 @@ Body (saat dibuka): pencarian + filter, lalu tabel kandidat dengan kolom:
 | **Peserta** | Avatar berinisial + nama + email |
 | **Interview** | Status kandidat: `Invited` / `In Progress` / `Completed` / `Expired` / `Cancelled` |
 | **Asesor** | Avatar + nama asesor yang menilai (`–` bila belum ditugaskan) |
-| **Status Validasi** | `Belum Ditugaskan` / `Menunggu` / `Sedang Direview` / `Tervalidasi` / `Direvisi` |
+| **Status Validasi** | `Belum Ditugaskan` / `Menunggu` / `In Progress` / `Completed` — disederhanakan biar seragam dengan kolom Interview: status internal `Sedang Direview` tampil sbg `In Progress`; `Tervalidasi` **dan** `Direvisi` sama-sama tampil sbg `Completed` (yang penting buat admin cuma selesai/belum, bukan tahapan internalnya) |
 
 ### Report final
 
@@ -432,6 +436,7 @@ Daftar jujur hal yang **belum** ada, supaya dokumen ini tidak dibaca seolah selu
 | **6** | Tidak ada autentikasi & role | Semua halaman admin terbuka; belum ada pemisahan Admin / Asesor / Klien | Perlu backend |
 | **7** | `admin_item_mgmt_v1` baru ditulis ke `localStorage` **setelah** admin mengubah sesuatu di Item Management | Di browser baru, dropdown Paket di Assignment Kandidat bisa tampil kosong meski halaman Item Management sudah pernah dibuka. Bawaan lama repo, bukan regresi | Bug kecil, perlu diperbaiki |
 | **8** | Bentuk `admin_assignment_v1` tidak konsisten | Ditulis sebagai array flat, sementara kode lama membacanya sebagai `{assignments:[]}`. `AD.readCandidates()` menoleransi keduanya sebagai jembatan | Utang teknis |
+| **9** | Membatalkan grup penugasan tidak punya pemicu UI | `AD.cancelGroup()` masih ada di data layer, tapi kartu "Penugasan pada Batch Ini" (dulu di Assignment, lengkap dengan tombol Batalkan) sudah dihapus supaya Assignment "straight to the point". Monitoring pun read-only. Admin tidak punya cara membatalkan penugasan asesor dari UI manapun | Perlu dibangun (mis. tombol batal di Monitoring) |
 
 ---
 
