@@ -359,7 +359,13 @@
   </div>
   <label class="f-label">Deskripsi</label>
   <textarea id="a-desc" rows="2" placeholder="Deskripsi singkat aspek…"></textarea>
-  <label class="f-label" style="margin-top:12px;">Rubrik 5 Level — Key Behavior <span class="req">*</span></label>
+  <div style="display:flex;align-items:center;gap:16px;margin-top:12px;margin-bottom:4px;">
+    <label class="f-label" style="margin:0;">Rubrik — Key Behavior <span class="req">*</span></label>
+    <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+      <label style="font-size:12px;color:var(--nm-muted-fg);white-space:nowrap;">Jumlah Level</label>
+      <input type="number" id="a-scale" min="2" max="10" style="width:60px;font-size:13px;padding:3px 6px;border:1px solid var(--nm-input);border-radius:6px;" onchange="onScaleChange()">
+    </div>
+  </div>
   <p class="hint" style="margin-bottom:8px;">Key behavior per level (boleh lebih dari satu) — seluruhnya dikirim ke AI sebagai dasar skoring setiap evaluasi jawaban.</p>
   <div id="a-rubrik"></div>
 
@@ -486,6 +492,8 @@ function load() {
     }
   }
   if (!DB.seq.cluster) DB.seq.cluster = DB.clusters.length + 1;
+  if (!DB.settings) DB.settings = { defaultScale: 5 };
+  if (!DB.settings.defaultScale) DB.settings.defaultScale = 5;
   // Migration: levels[i] string (1 KB/level) -> array of KB
   for (const a of DB.aspects) {
     if (Array.isArray(a.levels)) a.levels = a.levels.map(l => Array.isArray(l) ? l : (l ? [l] : []));
@@ -629,15 +637,14 @@ function renderBank() {
     for (const a of clAspects) {
       const items = DB.items.filter(i=>i.aspect===a.code&&i.status!=='Archived');
       const aspRowspan = Math.max(1, items.length);
-      const rubrikOk = Array.isArray(a.levels) && a.levels.length===5 && a.levels.every(l=>Array.isArray(l)?l.some(k=>k&&k.trim()):(l&&l.trim()));
+      const rubrikOk = Array.isArray(a.levels) && a.levels.length > 0 && a.levels.every(l=>Array.isArray(l)?l.some(k=>k&&k.trim()):(l&&l.trim()));
 
-      const LEVEL_SHORT = ['L1','L2','L3','L4','L5'];
-      const kbColHtml = Array.isArray(a.levels) && a.levels.length===5
+      const kbColHtml = Array.isArray(a.levels) && a.levels.length > 0
         ? `<td class="kb-col-td" rowspan="${aspRowspan}">${a.levels.map((kbs,i)=>{
             const list = (Array.isArray(kbs)?kbs:(kbs?[kbs]:[])).filter(k=>k&&k.trim());
             if (!list.length) return '';
             return `<div class="kb-col-lvl">
-              <span class="kb-lvl-chip">${LEVEL_SHORT[i]}</span>
+              <span class="kb-lvl-chip">L${i+1}</span>
               <div class="kb-col-list">${list.map(k=>`<div class="kb-col-item">${esc(k)}</div>`).join('')}</div>
             </div>`;
           }).join('')}</td>`
@@ -796,8 +803,11 @@ function openAspekModal(code, presetClusterId) {
   $('a-cluster').innerHTML = DB.clusters.map(cl=>
     `<option value="${cl.id}">${esc(cl.nama)}</option>`).join('');
   $('a-cluster').value = a ? a.clusterId : (presetClusterId || DB.clusters[0]?.id || '');
+  // determine scale: per-aspek override, or actual levels length, or global default
+  const scale = a ? (a.scale || a.levels.length || DB.settings.defaultScale) : DB.settings.defaultScale;
+  $('a-scale').value = scale;
   // seed draft: existing KBs per level, or one empty KB slot
-  rubrikDraft = LEVELS.map((_,i) => {
+  rubrikDraft = Array.from({length: scale}, (_, i) => {
     const kbs = a ? (Array.isArray(a.levels[i]) ? a.levels[i] : (a.levels[i] ? [a.levels[i]] : [])) : [];
     return kbs.length ? [...kbs] : [''];
   });
@@ -816,14 +826,14 @@ function openAspekModal(code, presetClusterId) {
 
 function renderRubrik() {
   syncRubrikDraft();  // capture current textarea values before re-render
-  $('a-rubrik').innerHTML = LEVELS.map((lbl,i) => `
+  $('a-rubrik').innerHTML = rubrikDraft.map((kbs, i) => `
     <div class="rubrik-lvl">
       <span class="lvl-chip">L${i+1}</span>
       <div class="kb-list">
-        ${rubrikDraft[i].map((kb,j) => `
+        ${kbs.map((kb,j) => `
           <div class="kb-row">
             <textarea rows="2" data-lvl="${i}" data-kb="${j}" placeholder="Key behavior ${j+1}…">${esc(kb)}</textarea>
-            ${rubrikDraft[i].length>1 ? `<button type="button" class="kb-del" title="Hapus KB" onclick="kbDel(${i},${j})">&times;</button>` : ''}
+            ${kbs.length>1 ? `<button type="button" class="kb-del" title="Hapus KB" onclick="kbDel(${i},${j})">&times;</button>` : ''}
           </div>`).join('')}
         <button type="button" class="kb-add" onclick="kbAdd(${i})">+ Key Behavior</button>
       </div>
@@ -839,10 +849,28 @@ function syncRubrikDraft() {
 function kbAdd(lvl) { syncRubrikDraft(); rubrikDraft[lvl].push(''); renderRubrik(); }
 function kbDel(lvl, j) { syncRubrikDraft(); rubrikDraft[lvl].splice(j,1); if(!rubrikDraft[lvl].length) rubrikDraft[lvl].push(''); renderRubrik(); }
 
+function onScaleChange() {
+  const newScale = Math.min(10, Math.max(2, parseInt($('a-scale').value) || DB.settings.defaultScale));
+  $('a-scale').value = newScale;
+  syncRubrikDraft();
+  const oldScale = rubrikDraft.length;
+  if (newScale < oldScale) {
+    const hasData = rubrikDraft.slice(newScale).some(kbs => kbs.some(k => k.trim()));
+    if (hasData && !confirm(`Mengurangi ke ${newScale} level akan menghapus KB di L${newScale+1}–L${oldScale}. Lanjutkan?`)) {
+      $('a-scale').value = oldScale; return;
+    }
+    rubrikDraft = rubrikDraft.slice(0, newScale);
+  } else if (newScale > oldScale) {
+    for (let i = oldScale; i < newScale; i++) rubrikDraft.push(['']);
+  }
+  renderRubrik();
+}
+
 function saveAspek() {
   const code  = $('a-kode').value.trim().toUpperCase();
   const nama  = $('a-nama').value.trim();
   const clusterId = $('a-cluster').value;
+  const scale = Math.min(10, Math.max(2, parseInt($('a-scale').value) || DB.settings.defaultScale));
   syncRubrikDraft();
   const levels = rubrikDraft.map(kbs => kbs.map(k=>k.trim()).filter(Boolean));
   if (!code||!nama) return toast('Kode dan nama wajib diisi');
@@ -855,9 +883,9 @@ function saveAspek() {
     if (dipakaiPublished && JSON.stringify(levels)!==JSON.stringify(a.levels)) {
       if (!confirm('⚠️ Rubrik aspek ini dipakai paket Published. Perubahan rubrik sebaiknya lewat VERSI BARU paket. Tetap simpan?')) return;
     }
-    Object.assign(a, { name:nama, clusterId, desc:$('a-desc').value.trim(), levels });
+    Object.assign(a, { name:nama, clusterId, desc:$('a-desc').value.trim(), levels, scale });
   } else {
-    DB.aspects.push({ code, name:nama, clusterId, desc:$('a-desc').value.trim(), levels, status:'Aktif' });
+    DB.aspects.push({ code, name:nama, clusterId, desc:$('a-desc').value.trim(), levels, scale, status:'Aktif' });
   }
   closeModal('m-aspek'); save(); toast('Aspek tersimpan');
 }
