@@ -637,7 +637,6 @@ function renderBank() {
     for (const a of clAspects) {
       const items = DB.items.filter(i=>i.aspect===a.code&&i.status!=='Archived');
       const aspRowspan = Math.max(1, items.length);
-      const rubrikOk = Array.isArray(a.levels) && a.levels.length > 0 && a.levels.every(l=>Array.isArray(l)?l.some(k=>k&&k.trim()):(l&&l.trim()));
 
       const kbColHtml = Array.isArray(a.levels) && a.levels.length > 0
         ? `<td class="kb-col-td" rowspan="${aspRowspan}">${a.levels.map((kbs,i)=>{
@@ -654,11 +653,6 @@ function renderBank() {
         <div class="aspek-td-code">${esc(a.code)}</div>
         <div class="aspek-td-name">${esc(a.name)}</div>
         ${a.desc?`<div class="aspek-td-desc">${esc(a.desc)}</div>`:''}
-        <div>
-          ${rubrikOk
-            ? '<span class="status-badge sb-aktif" style="font-size:10px;padding:1px 7px;">Rubrik ✓</span>'
-            : '<span class="status-badge sb-error" style="font-size:10px;padding:1px 7px;">Rubrik —</span>'}
-        </div>
       </td>`;
 
       const SVG_EDIT = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
