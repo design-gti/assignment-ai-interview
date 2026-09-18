@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin/assignment.html" },
-    { "source": "/admin/", "destination": "/admin/assignment.html" }
+  "redirects": [
+    { "source": "/admin", "destination": "/admin/assignment.html", "permanent": false },
+    { "source": "/admin/", "destination": "/admin/assignment.html", "permanent": false }
   ]
 }
