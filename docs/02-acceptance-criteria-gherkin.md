@@ -7,7 +7,7 @@
 > **Legenda status:**
 > ✅ sudah terimplementasi di prototype · 🟡 sebagian · 🔴 spesifikasi, belum dibangun
 
-**Versi:** 1.0 · **Tanggal:** 15 September 2026
+**Versi:** 1.1 · **Tanggal:** 16 September 2026
 
 ---
 
@@ -485,16 +485,18 @@ Fitur: Report AI
 | AC6.5 | Batch yang masih punya kandidat siap-tugas diurutkan ke atas | ✅ |
 | AC6.6 | Daftar kandidat hanya memuat yang report AI-nya siap **dan** belum ditugaskan di batch itu | ✅ |
 | AC6.7 | Tersedia pilih-semua kandidat | ✅ |
-| AC6.8 | Setiap kandidat menampilkan ringkasan skor AI (`avgLevel`, `achieved/total`) sebagai bahan pertimbangan | ✅ |
+| AC6.8 | Setiap kandidat menampilkan tanggal **Interview Selesai** dan status penugasannya — bukan skor AI, supaya keputusan menugaskan tidak bias oleh angka AI sebelum divalidasi | ✅ |
 | AC6.9 | Nama asesor diinput bebas, dengan saran dari riwayat penugasan sebelumnya | ✅ |
 | AC6.10 | Email asesor wajib, divalidasi formatnya, dan menjadi identitas asesor | ✅ |
 | AC6.11 | Tanggal Mulai dan Deadline SLA wajib; deadline tidak boleh mendahului tanggal mulai | ✅ |
 | AC6.12 | Tombol submit tidak aktif selama form belum lengkap | ✅ |
 | AC6.13 | Satu kali submit menghasilkan satu grup penugasan dan N task berstatus `Menunggu` | ✅ |
 | AC6.14 | Setelah submit berhasil, batch tetap terpilih agar admin bisa lanjut ke asesor berikutnya | ✅ |
-| AC6.15 | Grup penugasan yang sudah dibuat bisa dibatalkan | ✅ |
+| AC6.15 | Grup penugasan yang sudah dibuat bisa dibatalkan | 🟡 `AD.cancelGroup()` masih ada di data layer, tapi UI pemicunya (kartu "Penugasan pada Batch Ini" di Assignment) sudah dihapus — belum ada penggantinya di halaman manapun. Lihat Gap #9 |
 | AC6.16 | Tab bisa dibuka langsung lewat `assignment.html#asesor` | ✅ |
 | AC6.17 | Notifikasi penugasan terkirim ke email asesor | 🔴 Gap #4 |
+| AC6.18 | List batch (bukan grid) berpindah halaman 10 batch/halaman bila jumlahnya lebih banyak; pencarian/filter mereset ke halaman pertama | ✅ |
+| AC6.19 | Tiap baris batch merangkum progres penugasan sebagai satu angka `X/Y ditugaskan` (X = sudah ditugaskan, Y = report AI siap) — bukan tiga angka terpisah | ✅ |
 
 ### Gherkin
 
@@ -553,7 +555,7 @@ Fitur: Assignment Asesor
     Dan 5 task validasi dibuat berstatus "Menunggu"
     Dan seluruh task tersebut berada dalam satu grup penugasan
     Dan batch "Interview AI — Account Executive Q4" tetap terpilih
-    Tapi field kandidat, asesor, dan catatan sudah dikosongkan
+    Tapi field kandidat dan asesor sudah dikosongkan
 
   Skenario Konsep: Validasi form penugasan
     Dengan saya memilih batch "Interview AI — Account Executive Q4"
@@ -578,17 +580,46 @@ Fitur: Assignment Asesor
     Dan memilih saran tersebut ikut mengisi email asesornya
     Tapi saya tetap bisa mengetik nama asesor baru yang belum pernah ada
 
-  Skenario: Membatalkan grup penugasan
-    Dengan terdapat grup penugasan berisi 4 task untuk asesor "Ahmad Fauzi, M.Psi"
-    Ketika saya membatalkan grup penugasan tersebut
-    Dan saya menyetujui konfirmasi pembatalan
-    Maka keempat task tersebut dihapus
-    Dan keempat kandidatnya kembali muncul di daftar kandidat yang bisa ditugaskan
+  # Kartu "Penugasan pada Batch Ini" (dan tombol Batalkan di dalamnya) sudah dihapus
+  # dari halaman ini — lihat AC6.15 dan Gap #9. Skenario pembatalan grup TIDAK bisa
+  # lagi diuji lewat UI Assignment; AD.cancelGroup() hanya bisa dipanggil langsung.
 
   Skenario: Deep link langsung ke tab asesor
     Ketika saya membuka "assignment.html#asesor"
     Maka tab "Assignment Asesor" langsung aktif
     Dan tab "Assignment Kandidat" tidak ditampilkan
+
+  Skenario: Kolom kandidat menampilkan tanggal interview selesai, bukan skor AI
+    Dengan saya memilih batch "Interview AI — Sales Hunter Q3"
+    Ketika saya melihat tabel Pilih Kandidat
+    Maka kolom kedua berjudul "Interview Selesai" berisi tanggal report AI kandidat dibangkitkan
+    Dan tidak ada kolom skor AI di tabel tersebut
+
+  Skenario Konsep: Progres batch ditampilkan sebagai satu pecahan
+    Dengan batch "Batch X" punya "<assigned>" kandidat sudah ditugaskan dari "<siap>" report AI yang siap
+    Ketika saya melihat baris batch tersebut di daftar Pilih Batch
+    Maka baris tersebut menampilkan "<assigned>/<siap> ditugaskan"
+    Dan baris tersebut tidak lagi menampilkan angka "report AI siap" secara terpisah
+
+    Contoh:
+      | assigned | siap |
+      | 7        | 14   |
+      | 8        | 8    |
+      | 0        | 12   |
+
+  Skenario: Daftar batch berpindah halaman kalau lebih dari 10
+    Dengan terdapat 15 batch kandidat
+    Ketika saya membuka tab Assignment Asesor
+    Maka daftar batch menampilkan 10 batch pertama sebagai list satu kolom
+    Dan saya melihat info "Halaman 1 dari 2 · 15 batch"
+    Ketika saya menekan "Selanjutnya"
+    Maka 5 batch sisanya ditampilkan
+    Dan tombol "Selanjutnya" tidak bisa ditekan lagi
+
+  Skenario: Pencarian batch mereset ke halaman pertama
+    Dengan saya berada di halaman 2 dari daftar batch
+    Ketika saya mengetik kata kunci pencarian batch
+    Maka daftar batch kembali ke halaman 1 dengan hasil yang cocok
 ```
 
 ---
@@ -696,7 +727,7 @@ Fitur: Validasi oleh Asesor
 | AC8.1 | Satu kartu per batch, memuat badge status scoring, periode, jumlah peserta, dan progress bar | ✅ |
 | AC8.2 | Status scoring diturunkan otomatis, bukan diinput manual | ✅ |
 | AC8.3 | Batch **overdue** selalu muncul paling atas | ✅ |
-| AC8.4 | Urutan berikutnya: Sedang Discoring → Belum Discoring → Belum Siap → Selesai Discoring | ✅ |
+| AC8.4 | Urutan sortir internal: Sedang Discoring → Belum Discoring → Belum Siap → Selesai Discoring — meski `Belum Discoring` dan `Belum Siap` kini tampil dengan **label yang sama** di kartu (lihat AC8.14), urutannya tetap mengikuti status internal | ✅ |
 | AC8.5 | Kartu bisa dibuka-tutup, dan lebih dari satu kartu boleh terbuka bersamaan | ✅ |
 | AC8.6 | Tabel kandidat memuat kolom Peserta, Interview, Asesor, dan Status Validasi | ✅ |
 | AC8.7 | Kolom Asesor dan Status Validasi terpisah — Asesor menampilkan avatar + nama, Status Validasi menampilkan badge | ✅ |
@@ -705,6 +736,8 @@ Fitur: Validasi oleh Asesor
 | AC8.10 | KPI di atas halaman merangkum jumlah batch per status scoring, overdue, dan at risk | ✅ |
 | AC8.11 | Tersedia tautan langsung ke `assignment.html#asesor` untuk menugaskan asesor | ✅ |
 | AC8.12 | Batch dengan SLA tersisa ≤ 2 hari ditandai **At Risk** | ✅ |
+| AC8.13 | Status Validasi disederhanakan jadi `Menunggu` / `In Progress` / `Completed` (plus `Belum Ditugaskan`) — seragam dengan kolom Interview. Status internal `Sedang Direview` tampil sbg `In Progress`; `Tervalidasi` **dan** `Direvisi` sama-sama tampil sbg `Completed`, karena yang perlu dicek cuma selesai/belum | ✅ |
+| AC8.14 | Badge status scoring `Belum Siap` (report AI belum ada) ditampilkan dengan label yang sama seperti `Belum Discoring` (report siap tapi belum ada asesor) — dari sisi admin keduanya sama-sama berarti "belum discoring" | ✅ |
 
 ### Gherkin
 
@@ -721,14 +754,25 @@ Fitur: Monitoring
   Skenario Konsep: Status scoring diturunkan dari kondisi batch
     Dengan batch "Batch X" memiliki kondisi "<kondisi>"
     Ketika saya melihat kartu batch tersebut
-    Maka badge status scoring menunjukkan "<status>"
+    Maka badge status scoring menunjukkan "<label>"
 
+    # "belum ada report AI" dan "report AI siap tapi belum ada asesor" sengaja
+    # menunjukkan LABEL YANG SAMA ("Belum Discoring") — keduanya sama-sama
+    # berarti batch ini belum discoring. Status internalnya tetap berbeda dan
+    # itulah yang dipakai untuk urutan sortir kartu (lihat AC8.4).
     Contoh:
-      | kondisi                                          | status            |
-      | belum ada report AI sama sekali                  | Belum Siap        |
+      | kondisi                                          | label             |
+      | belum ada report AI sama sekali                  | Belum Discoring   |
       | report AI siap tapi belum ada task asesor        | Belum Discoring   |
       | ada task asesor yang belum seluruhnya selesai    | Sedang Discoring  |
       | semua task selesai dan mencakup semua report siap| Selesai Discoring |
+
+  Skenario: Batch tanpa report AI ikut tampil "Belum Discoring"
+    Dengan batch "Interview AI — Key Account Manager" belum punya report AI sama sekali
+    Dan batch "Interview AI — Account Executive Q4" report AI-nya sudah siap tapi belum ada asesor
+    Ketika saya melihat kedua kartu batch tersebut
+    Maka keduanya menunjukkan badge "Belum Discoring"
+    Tapi urutan kartu tetap menempatkan "Account Executive Q4" lebih dulu
 
   Skenario Konsep: Penandaan SLA
     Dengan batch "Batch X" punya deadline aktif "<deadline>"
@@ -766,18 +810,23 @@ Fitur: Monitoring
     Maka baris "Fajar Nugroho" menampilkan status validasi "Belum Ditugaskan"
     Dan kolom asesor pada baris tersebut kosong
 
-  Skenario Konsep: Status validasi per kandidat
-    Dengan kandidat "Budi Santoso" punya task validasi berstatus "<status task>"
+  Skenario Konsep: Status validasi per kandidat disederhanakan untuk tampilan
+    Dengan kandidat "Budi Santoso" punya task validasi berstatus internal "<status internal>"
     Ketika saya membuka kartu batch yang memuatnya
-    Maka baris "Budi Santoso" menampilkan badge "<status task>"
+    Maka baris "Budi Santoso" menampilkan badge "<badge tampil>"
     Dan kolom asesor menampilkan nama asesor yang menanganinya
 
     Contoh:
-      | status task     |
-      | Menunggu        |
-      | Sedang Direview |
-      | Tervalidasi     |
-      | Direvisi        |
+      | status internal | badge tampil |
+      | Menunggu         | Menunggu     |
+      | Sedang Direview  | In Progress  |
+      | Tervalidasi      | Completed    |
+      | Direvisi         | Completed    |
+
+  Skenario: Filter status validasi memakai label yang sudah disederhanakan
+    Dengan kartu batch terbuka memuat kandidat berstatus internal campuran (Menunggu, Sedang Direview, Tervalidasi, Direvisi)
+    Ketika saya memilih "Completed" pada dropdown filter status kartu tersebut
+    Maka hanya kandidat berstatus internal "Tervalidasi" atau "Direvisi" yang ditampilkan
 
   Skenario: Pencarian per kartu tidak saling memengaruhi
     Dengan kartu batch "Interview AI — Sales Hunter Q3" dan "Interview AI — Business Development" keduanya terbuka
@@ -860,14 +909,15 @@ Fitur: Navigasi & Struktur Halaman
 | E3 Assignment Kandidat | 13 | 12 | 0 | 1 |
 | E4 Pelaksanaan Interview | 12 | 9 | 1 | 2 |
 | E5 Report AI | 8 | 7 | 1 | 0 |
-| E6 Assignment Asesor | 17 | 16 | 0 | 1 |
+| E6 Assignment Asesor | 19 | 17 | 1 | 1 |
 | E7 Validasi oleh Asesor | 12 | 0 | 0 | 12 |
-| E8 Monitoring | 12 | 12 | 0 | 0 |
+| E8 Monitoring | 14 | 14 | 0 | 0 |
 | E9 Navigasi | 8 | 8 | 0 | 0 |
-| **Total** | **101** | **83** | **2** | **16** |
+| **Total** | **105** | **86** | **3** | **16** |
 
 **Prioritas pembangunan berikutnya**, berdasarkan sebaran 🔴 di atas:
 
-1. **E7 — Halaman Validasi Asesor** (12 AC). Ini satu-satunya epic yang sama sekali kosong, sekaligus mata rantai yang memutus alur end-to-end: tanpa ini, status `Tervalidasi` / `Direvisi` yang sudah dirender Monitoring tidak akan pernah muncul dari aksi nyata.
+1. **E7 — Halaman Validasi Asesor** (12 AC). Ini satu-satunya epic yang sama sekali kosong, sekaligus mata rantai yang memutus alur end-to-end: tanpa ini, status `Tervalidasi` / `Direvisi` yang sudah dirender Monitoring (sebagai `Completed`) tidak akan pernah muncul dari aksi nyata.
 2. **Persistensi hasil interview** (Gap #1). Prasyarat teknis E7 — asesor tidak bisa memvalidasi report yang tidak pernah tersimpan.
 3. **Mekanisme undangan** (AC3.13, AC6.17). Kandidat dan asesor saat ini tidak pernah benar-benar diberi tahu bahwa mereka punya tugas.
+4. **Cara membatalkan penugasan** (AC6.15, Gap #9). Kemampuannya masih ada di data layer, tapi sejak kartu "Penugasan pada Batch Ini" dihapus dari Assignment, tidak ada UI manapun yang bisa memicunya — perlu tempat baru, kemungkinan besar di Monitoring.

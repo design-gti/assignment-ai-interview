@@ -103,10 +103,6 @@
   /* status validasi & status interview per kandidat */
   .sub-status { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; padding: 2px 8px; font-size: 10px; font-weight: 600; border: 1px solid; white-space: nowrap; }
   .vs-belum     { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
-  .vs-menunggu  { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
-  .vs-review    { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
-  .vs-validated { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-  .vs-revised   { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
   .ss-assigned   { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
   .ss-invited    { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
   .ss-inprogress { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
@@ -274,11 +270,20 @@ function progColor(pct){if(pct===0)return'#f87171';if(pct<50)return'#fbbf24';if(
    platform interview; Started/In Progress: sedang mengerjakan; Completed: selesai) */
 function subStatus(s){const map={Assigned:'ss-assigned',Invited:'ss-invited',Started:'ss-inprogress','In Progress':'ss-inprogress',Completed:'ss-completed',Expired:'ss-expired',Cancelled:'ss-cancelled'};return`<span class="sub-status ${map[s]||'ss-assigned'}">${esc(s)}</span>`;}
 
-/* status validasi per kandidat */
-const VS_CLASS={[AD.TASK_STATUS.MENUNGGU]:'vs-menunggu',[AD.TASK_STATUS.REVIEW]:'vs-review',[AD.TASK_STATUS.VALIDATED]:'vs-validated',[AD.TASK_STATUS.REVISED]:'vs-revised'};
+/* status validasi per kandidat — disederhanakan jadi 3 kondisi + "belum
+   ditugaskan", biar seragam dgn kolom Interview: yang perlu dicek cuma
+   selesai atau belum, bukan tahapan internal proses asesor.
+   Sedang Direview -> In Progress; Tervalidasi & Direvisi -> Completed. */
+function validasiStatusOf(task){
+  if(!task)return'Belum Ditugaskan';
+  if(AD.DONE_STATUS.includes(task.status))return'Completed';
+  if(task.status===AD.TASK_STATUS.REVIEW)return'In Progress';
+  return'Menunggu';
+}
+const VS_CLASS={'Belum Ditugaskan':'vs-belum','Menunggu':'ss-assigned','In Progress':'ss-inprogress','Completed':'ss-completed'};
 function validasiBadge(task){
-  if(!task)return'<span class="sub-status vs-belum">Belum Ditugaskan</span>';
-  return`<span class="sub-status ${VS_CLASS[task.status]||'vs-belum'}">${esc(task.status)}</span>`;
+  const label=validasiStatusOf(task);
+  return`<span class="sub-status ${VS_CLASS[label]}">${esc(label)}</span>`;
 }
 /* avatar bulat berinisial */
 const AVATARBG=['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
@@ -298,6 +303,13 @@ SCORING_BADGE_CLASS[AD.SCORING.BELUM_SIAP]='bd-slate';
 SCORING_BADGE_CLASS[AD.SCORING.BELUM]='bd-slate';
 SCORING_BADGE_CLASS[AD.SCORING.SEDANG]='bd-blue';
 SCORING_BADGE_CLASS[AD.SCORING.SELESAI]='bd-green';
+
+/* label tampilan status scoring — "Belum Siap" (report AI belum ada) ditampilkan
+   sbg "Belum Discoring" juga: dari sisi monitoring keduanya sama2 berarti batch
+   belum discoring, bedanya cuma kenapa. Cuma ganti teksnya, bukan AD.SCORING —
+   value aslinya masih dipakai untuk urutan kartu di assessor-data.js. */
+const SCORING_LABEL={}; SCORING_LABEL[AD.SCORING.BELUM_SIAP]='Belum Discoring';
+function scoringLabel(status){ return SCORING_LABEL[status]||status; }
 
 /* progres individual: 0% belum interview, 50% interview selesai tapi
    belum tervalidasi asesor, 100% sudah tervalidasi/direvisi */
@@ -348,10 +360,7 @@ function cardRows(r){
     cands=cands.filter(c=>c.nama.toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q));
   }
   if(f.status){
-    cands=cands.filter(c=>{
-      const t=taskByCand[c.id];
-      return(t?t.status:'Belum Ditugaskan')===f.status;
-    });
+    cands=cands.filter(c=>validasiStatusOf(taskByCand[c.id])===f.status);
   }
   return{taskByCand,cands,f};
 }
@@ -379,13 +388,13 @@ function batchCardHtml(r){
 
   const rowsHtml=rowsHtmlFor(cands,taskByCand);
 
-  const STATUS_OPTS=['','Belum Ditugaskan',AD.TASK_STATUS.MENUNGGU,AD.TASK_STATUS.REVIEW,AD.TASK_STATUS.VALIDATED,AD.TASK_STATUS.REVISED];
+  const STATUS_OPTS=['','Belum Ditugaskan','Menunggu','In Progress','Completed'];
 
   return`<div class="orbid-batch">
     <div class="orbid-head" onclick="toggleBatch('${jsq(r.id)}')">
       <span class="orbid-chevron ${isOpen?'open':''}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span>
       <span class="orbid-name">${esc(r.batchName)}</span>
-      <span class="status-badge ${badgeCls}">${esc(r.scoringStatus)}</span>
+      <span class="status-badge ${badgeCls}">${esc(scoringLabel(r.scoringStatus))}</span>
       <span class="orbid-meta">${esc(AD.fmtDate(r.periodStart))} – ${esc(AD.fmtDate(r.periodEnd))} · ${r.total} peserta</span>
       <div class="orbid-progress">
         <div class="orbid-progress-track"><div class="orbid-progress-fill" style="width:${overallPct}%;background:${progColor(overallPct)};"></div></div>

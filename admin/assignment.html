@@ -101,19 +101,13 @@
   input[type=checkbox]:disabled{cursor:not-allowed;}
 
   /* ── Kartu pilihan batch (tab Asesor) ── */
-  .pick-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  @media (max-width:1000px){.pick-list{grid-template-columns:repeat(2,1fr);}}
-  @media (max-width:700px){.pick-list{grid-template-columns:1fr;}}
-  .pick-list .pick-stats{margin-top:auto;padding-top:10px;}
-  .pick-list .pick-top{flex-direction:column;align-items:flex-start;gap:7px;}
-  .pick-list .pick-top .status-badge{order:-1;}
+  .pick-list{display:flex;flex-direction:column;gap:8px;}
+  .pick-list .pick-stats{padding-top:10px;}
   .pick-card{display:flex;flex-direction:column;width:100%;text-align:left;font-family:inherit;background:#fff;border:1px solid var(--nm-border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;}
   .pick-card:not(.dis):not(:disabled):hover{border-color:#93c5fd;box-shadow:0 1px 4px rgba(15,23,42,.06);}
   .pick-card.sel{border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
   .pick-card:disabled,.pick-card.dis{opacity:.6;cursor:not-allowed;background:var(--nm-muted);}
   .pick-card.dis.sel{opacity:1;border-color:#3b82f6;background:#eff6ff;box-shadow:0 0 0 1px #3b82f6;}
-  .review-link{background:none;border:none;padding:0;margin-top:9px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#3b82f6;cursor:pointer;text-decoration:underline;}
-  .review-link:hover{color:#2563eb;}
   .pick-card:focus-visible{outline:2px solid #93c5fd;outline-offset:1px;}
   .pick-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
   .pick-name{font-size:13px;font-weight:700;color:var(--nm-fg);line-height:1.35;}
@@ -121,6 +115,10 @@
   .pick-stats{font-size:11px;color:#475569;margin-top:10px;line-height:1.5;}
   .pick-reason{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px 9px;margin-top:10px;}
   .pick-reason svg{flex-shrink:0;margin-top:1px;color:#d97706;}
+  .pick-pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;}
+  .pg-info{font-size:12px;color:var(--nm-muted-fg);}
+  .pg-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .pg-btn:disabled:hover{border-color:var(--nm-border);color:#374151;}
 
   /* ── Badge ── */
   .status-badge{display:inline-flex;align-items:center;gap:5px;border-radius:9999px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
@@ -150,7 +148,7 @@
   .cell-name{font-weight:600;color:var(--nm-fg);}
   .cell-sub{font-size:11px;color:var(--nm-muted-fg);margin-top:2px;}
   .cell-nowrap{white-space:nowrap;}
-  #cand-tbody td,#grp-tbody td{padding-top:10px;padding-bottom:10px;}
+  #cand-tbody td{padding-top:10px;padding-bottom:10px;}
   .tbl-scroll table{min-width:760px;}
   .muted{color:var(--nm-muted-fg);}
   .empty{text-align:center;color:var(--nm-muted-fg);padding:32px 14px;font-size:13px;}
@@ -231,24 +229,6 @@
   .empty-state h2{font-size:14px;font-weight:600;color:var(--nm-fg);margin:0;}
   .empty-state p{font-size:12px;color:var(--nm-muted-fg);margin:0;max-width:340px;line-height:1.55;}
 
-  /* ── Ringkasan penugasan + penugasan existing (tab Asesor, satu container) ── */
-  .sum-card{background:#fff;border:1px solid var(--nm-border);border-top:3px solid #3b82f6;border-radius:var(--nm-radius);padding:20px 24px;margin-bottom:16px;}
-  .sum-label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:10px;}
-  .sum-label svg{color:#94a3b8;flex-shrink:0;}
-  .sum-divider{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--nm-border);}
-  .sum-divider span:last-child{font-size:12px;font-weight:600;text-transform:none;letter-spacing:normal;color:var(--nm-fg);}
-  .sum-stats{display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;}
-  .sum-stat{display:flex;align-items:center;gap:8px;padding:0 18px 0 0;margin-right:18px;border-right:1px solid var(--nm-border);}
-  .sum-stat:last-child{border-right:none;margin-right:0;padding-right:0;}
-  .sum-stat-ic{display:flex;flex-shrink:0;color:#3b82f6;}
-  .sum-stat-val{font-size:13px;font-weight:700;color:var(--nm-fg);line-height:1.3;}
-  .sum-stat-sub{font-size:11px;font-weight:500;color:var(--nm-muted-fg);margin-top:1px;line-height:1.3;}
-  .sum-notice{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--nm-muted-fg);line-height:1.6;max-width:640px;}
-  .sum-notice svg{flex-shrink:0;margin-top:1px;color:#94a3b8;}
-  .sum-notice.warn svg{color:#d97706;}
-  .sum-notice b{color:var(--nm-fg);font-weight:600;}
-  .miss-tag{display:inline-flex;align-items:center;background:#f1f5f9;color:#475569;border-radius:5px;padding:1px 7px;font-size:11px;font-weight:600;margin:0 2px;white-space:nowrap;}
-
   /* ── Aksi form (dipakai kedua tab) ── */
   .form-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:20px 0 0;border-top:1px solid var(--nm-border);}
   .btn-reset{padding:9px 20px;background:#fff;border:1px solid var(--nm-border);border-radius:6px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;}
@@ -258,8 +238,6 @@
   .btn-submit:disabled{background:#cbd5e1;color:#f8fafc;cursor:not-allowed;}
   .btn-outline-sm{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--nm-border);background:#fff;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:#374151;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;}
   .btn-outline-sm:hover{border-color:#3b82f6;color:#3b82f6;}
-  .btn-row-danger{background:none;border:1px solid var(--nm-border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-row-danger:hover{border-color:#fca5a5;background:#fee2e2;color:#b91c1c;}
   .link-sm{display:inline-block;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:500;}
   .link-sm:hover{text-decoration:underline;}
   .link-btn{background:none;border:none;padding:0;font-family:'Inter',sans-serif;font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline;}
@@ -508,7 +486,7 @@
         <div class="card-tools">
           <div class="search-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="search" id="b-q" placeholder="Cari nama batch…" oninput="renderAsesorAll()">
+            <input type="search" id="b-q" placeholder="Cari nama batch…" oninput="onBatchSearch()">
           </div>
           <div class="toggle-group">
             <button class="toggle-btn active" id="bf-all" onclick="setBatchFilter('')">Semua</button>
@@ -516,6 +494,7 @@
           </div>
         </div>
         <div class="pick-list" id="batch-list"></div>
+        <div class="pick-pagination" id="pick-pagination"></div>
       </div>
 
       <!-- ─── 2 · Pilih Kandidat ─── -->
@@ -553,8 +532,7 @@
                 <thead><tr>
                   <th style="width:38px;"></th>
                   <th>Kandidat</th>
-                  <th>Skor AI</th>
-                  <th>Report Siap</th>
+                  <th>Interview Selesai</th>
                   <th>Status</th>
                 </tr></thead>
                 <tbody id="cand-tbody"></tbody>
@@ -607,46 +585,6 @@
           </div>
         </div>
         <div class="f-hint" id="sla-hint"></div>
-
-        <div class="section-divider">Catatan untuk Asesor</div>
-        <div class="f-group">
-          <label class="f-label" for="f-note">Catatan <span>· opsional</span></label>
-          <textarea class="f-textarea" id="f-note" placeholder="Fokuskan review pada aspek Persuasi dan Negosiasi" oninput="onNote(this.value)"></textarea>
-        </div>
-      </div>
-
-      <!-- ─── Ringkasan penugasan + penugasan existing pada batch ini (satu container) ─── -->
-      <div class="sum-card">
-        <div class="sum-label">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
-          Ringkasan Penugasan
-        </div>
-        <div id="sum-body"></div>
-
-        <div id="card4" hidden>
-          <div class="sum-divider">
-            <span>Penugasan pada Batch Ini</span>
-            <span id="c4-batch"></span>
-          </div>
-          <div class="tbl-wrap">
-            <div class="tbl-scroll">
-              <table>
-                <thead><tr>
-                  <th>Asesor</th>
-                  <th>Kandidat</th>
-                  <th>Progress</th>
-                  <th>Periode SLA</th>
-                  <th>Status SLA</th>
-                  <th style="width:90px;"></th>
-                </tr></thead>
-                <tbody id="grp-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div style="margin-top:12px;">
-            <a href="monitoring.html" class="link-sm">Lihat Monitoring →</a>
-          </div>
-        </div>
       </div>
 
       <!-- ─── Aksi form ─── -->
@@ -982,25 +920,16 @@ const S = {
   assessorEmail: '',
   slaStart: AD.offsetISO(0),
   slaDue: AD.offsetISO(7),
-  note: '',
   batchFilter: '',
 };
 
 /* view buffer — dipakai supaya handler onclick cukup mengirim index,
    tidak perlu menyuntikkan id ke dalam atribut HTML.
    `sug` = saran asesor dari penugasan sebelumnya (bukan master data). */
-const V = { batches: [], cands: [], groups: [], sug: [] };
+const V = { batches: [], cands: [], sug: [] };
 
 /* ── ikon kecil ── */
 const IC_WARN = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-const IC_INFO = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-/* ikon stat ringkasan penugasan — konsisten dgn ikon Card 1/2/3 */
-const IC_SUM = {
-  kandidat: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  batch: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
-  asesor: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-  deadline: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>',
-};
 
 /* ── warna ── */
 function progColor(pct) {
@@ -1010,7 +939,6 @@ function progColor(pct) {
   return '#34d399';
 }
 const READINESS_CLASS = { 'Siap': 'bd-green', 'Sebagian Siap': 'bd-amber', 'Belum Siap': 'bd-slate' };
-const SLA_CLASS = { done: 'bd-green', ontrack: 'bd-blue', atrisk: 'bd-amber', overdue: 'bd-red' };
 
 function bar(pct, color) {
   return '<div class="prog-bar"><div class="prog-track"><div class="prog-fill" style="width:' + pct +
@@ -1026,8 +954,22 @@ function slaDuration() {
 }
 
 /* ═════════ 1 · BATCH ═════════ */
+const BATCH_PAGE_SIZE = 10;
+let batchPage = 1;
+
+function onBatchSearch() {
+  batchPage = 1;
+  renderAsesorAll();
+}
+
+function goBatchPage(delta) {
+  batchPage += delta;
+  renderAsesorAll();
+}
+
 function setBatchFilter(f) {
   S.batchFilter = f;
+  batchPage = 1;
   $('bf-all').classList.toggle('active', f === '');
   $('bf-ready').classList.toggle('active', f === 'ready');
   renderAsesorAll();
@@ -1049,18 +991,19 @@ function renderBatches() {
     String(b.paketName).toLowerCase().includes(q));
   if (S.batchFilter === 'ready') list = list.filter(b => !batchDisableReason(b));
 
-  V.batches = list;
-
   if (!all.length) {
+    V.batches = [];
     $('batch-list').innerHTML =
       '<div class="empty-state"><div class="empty-state-icon">📭</div>' +
       '<h2>Belum ada batch kandidat</h2>' +
       '<p>Buat assignment kandidat terlebih dahulu di tab Assignment Kandidat. Setelah kandidat menyelesaikan ' +
       'interview dan report by AI terbit, batch-nya akan muncul di sini.</p>' +
       `<button type="button" class="btn-outline-sm" onclick="switchMainTab('kandidat')">Ke Assignment Kandidat →</button></div>`;
+    $('pick-pagination').innerHTML = '';
     return;
   }
   if (!list.length) {
+    V.batches = [];
     const onlyFilter = S.batchFilter === 'ready' && !q;
     $('batch-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>' +
       (onlyFilter
@@ -1070,10 +1013,24 @@ function renderBatches() {
         : '<h2>Tidak ada batch yang cocok</h2>' +
           '<p>Ubah kata kunci pencarian atau pilih filter “Semua”.</p>') +
       '</div>';
+    $('pick-pagination').innerHTML = '';
     return;
   }
 
-  $('batch-list').innerHTML = list.map((b, i) => {
+  // list biasa (bukan grid) + pagination 10/halaman biar UI tidak penuh saat batch banyak
+  const totalPages = Math.max(1, Math.ceil(list.length / BATCH_PAGE_SIZE));
+  if (batchPage > totalPages) batchPage = totalPages;
+  if (batchPage < 1) batchPage = 1;
+  const pageList = list.slice((batchPage - 1) * BATCH_PAGE_SIZE, batchPage * BATCH_PAGE_SIZE);
+  V.batches = pageList;
+
+  $('pick-pagination').innerHTML = totalPages > 1
+    ? '<button type="button" class="btn-outline-sm pg-btn" onclick="goBatchPage(-1)"' + (batchPage <= 1 ? ' disabled' : '') + '>‹ Sebelumnya</button>' +
+      '<span class="pg-info">Halaman ' + batchPage + ' dari ' + totalPages + ' · ' + list.length + ' batch</span>' +
+      '<button type="button" class="btn-outline-sm pg-btn" onclick="goBatchPage(1)"' + (batchPage >= totalPages ? ' disabled' : '') + '>Selanjutnya ›</button>'
+    : '';
+
+  $('batch-list').innerHTML = pageList.map((b, i) => {
     const reason = batchDisableReason(b);
     const pct    = b.total ? Math.round((b.reportReady / b.total) * 100) : 0;
     const sel    = S.batchId === b.id;
@@ -1086,8 +1043,8 @@ function renderBatches() {
       '</div>' +
       '<span class="status-badge ' + (READINESS_CLASS[b.readiness] || 'bd-slate') + '">' +
         esc(b.readiness) + '</span></div>' +
-      '<div class="pick-stats">' + b.total + ' kandidat · ' + b.reportReady + ' report AI siap · ' +
-        b.assignedCount + ' sudah ditugaskan · <b>' + b.assignableCount + ' bisa ditugaskan</b></div>' +
+      '<div class="pick-stats">' + b.total + ' kandidat · <b>' + b.assignedCount + '/' + b.reportReady +
+        ' ditugaskan</b></div>' +
       '<div style="margin-top:8px;">' + bar(pct, progColor(pct)) + '</div>' +
       (reason ? '<div class="pick-reason">' + IC_WARN + '<span>' + esc(reason) + '</span></div>' : '');
 
@@ -1097,14 +1054,9 @@ function renderBatches() {
         '" onclick="pickBatch(' + i + ')">' + inner + '</button>';
     }
 
-    // Batch terkunci. Kalau sudah punya penugasan, admin tetap harus bisa
-    // membukanya untuk memonitor / membatalkan grup (tanpa itu batch yang
-    // 100% ter-assign jadi tidak bisa disentuh sama sekali).
-    const review = b.assignedCount > 0
-      ? '<button type="button" class="review-link" onclick="reviewBatch(' + i + ')">' +
-        'Lihat penugasan batch ini →</button>'
-      : '';
-    return '<div class="pick-card dis' + (sel ? ' sel' : '') + '">' + inner + review + '</div>';
+    // Batch terkunci — tidak bisa dibuka dari sini. Penugasan yang sudah ada
+    // dipantau/dibatalkan lewat halaman Monitoring, bukan dari sini.
+    return '<div class="pick-card dis' + (sel ? ' sel' : '') + '">' + inner + '</div>';
   }).join('');
 }
 
@@ -1116,25 +1068,11 @@ function pickBatch(i) {
   renderAsesorAll();
 }
 
-/** buka batch terkunci dalam mode tinjau saja (kandidat tidak bisa dicentang) */
-function reviewBatch(i) {
-  const b = V.batches[i];
-  if (!b) return;
-  S.batchId = b.id;
-  S.candIds = [];
-  renderAsesorAll();
-}
-
 /* ═════════ 2 · KANDIDAT ═════════ */
 function assignedMap(batchId) {
   const map = {};
   AD.readTasks().forEach(t => { if (t.batchId === batchId) map[t.candidateId] = t.assessorName; });
   return map;
-}
-
-function avgChip(avg) {
-  const cls = avg >= 4 ? 'bd-green' : (avg >= 3 ? 'bd-blue' : 'bd-amber');
-  return '<span class="status-badge ' + cls + '">avg ' + esc(avg) + '</span>';
 }
 
 function renderCandidates(batch) {
@@ -1170,7 +1108,7 @@ function renderCandidates(batch) {
   chkAll.indeterminate = visPicked > 0 && visPicked < visPickable.length;
 
   if (!rows.length) {
-    $('cand-tbody').innerHTML = '<tr><td colspan="5" class="empty">Tidak ada kandidat yang cocok dengan pencarian.</td></tr>';
+    $('cand-tbody').innerHTML = '<tr><td colspan="4" class="empty">Tidak ada kandidat yang cocok dengan pencarian.</td></tr>';
     return;
   }
 
@@ -1179,11 +1117,6 @@ function renderCandidates(batch) {
     const ready  = !!(c.aiReport && c.aiReport.ready);
     const canPick = ready && !asr;
     const picked = pickedSet.has(c.id);
-
-    const skor = ready
-      ? c.aiReport.achieved + '/' + c.aiReport.total + ' aspek tercapai<div style="margin-top:4px;">' +
-        avgChip(c.aiReport.avgLevel) + '</div>'
-      : '<span class="muted">–</span>';
 
     const rpt = ready
       ? esc(AD.fmtDate(c.aiReport.generatedAt))
@@ -1204,7 +1137,6 @@ function renderCandidates(batch) {
         ' onchange="toggleCand(' + i + ', this.checked)"></td>' +
       '<td><div class="cell-name">' + esc(c.nama) + '</div>' +
         '<div class="cell-sub">' + esc(c.email || '–') + '</div></td>' +
-      '<td class="cell-nowrap">' + skor + '</td>' +
       '<td class="cell-nowrap" style="font-size:12px;color:var(--nm-muted-fg);">' + rpt + '</td>' +
       '<td>' + status + '</td>' +
     '</tr>';
@@ -1295,7 +1227,6 @@ function onSla() {
   S.slaDue   = $('f-due').value;
   renderAsesorAll();
 }
-function onNote(v) { S.note = v; }
 
 function renderSla() {
   const hint = $('sla-hint');
@@ -1320,54 +1251,14 @@ function renderSla() {
   hint.textContent = 'Durasi SLA ' + (dur == null ? '–' : dur) + ' hari · deadline ' + AD.fmtDate(S.slaDue);
 }
 
-/* ═════════ Ringkasan + submit ═════════ */
+/* ═════════ Submit ═════════ */
 function formReady() {
   const dur = slaDuration();
   return !!(S.batchId && S.candIds.length && assessorReady() && S.slaStart && S.slaDue && dur != null && dur >= 0);
 }
 
-function renderSummary(batch) {
-  const el  = $('sum-body');
-  const btn = $('btn-submit');
-  const ok  = formReady();
-  btn.disabled = !ok;
-
-  if (ok) {
-    const dur  = slaDuration();
-    const name = S.assessorName.trim();
-    const mail = S.assessorEmail.trim();
-    el.innerHTML =
-      '<div class="sum-stats">' +
-        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.kandidat + '</span><div><div class="sum-stat-val">' + S.candIds.length + ' kandidat</div><div class="sum-stat-sub">dipilih untuk validasi</div></div></div>' +
-        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.batch + '</span><div><div class="sum-stat-val">' + esc(batch ? batch.batchName : '–') + '</div><div class="sum-stat-sub">' + esc(batch ? batch.paketName : '') + '</div></div></div>' +
-        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.asesor + '</span><div><div class="sum-stat-val">' + esc(name) + '</div><div class="sum-stat-sub">' + esc(mail) + '</div></div></div>' +
-        '<div class="sum-stat"><span class="sum-stat-ic">' + IC_SUM.deadline + '</span><div><div class="sum-stat-val">' + esc(AD.fmtDate(S.slaDue)) + '</div><div class="sum-stat-sub">' + (dur == null ? 'deadline SLA' : 'durasi ' + dur + ' hari') + '</div></div></div>' +
-      '</div>';
-    return;
-  }
-
-  // batch terkunci yang dibuka dalam mode tinjau: jelaskan jalan keluarnya
-  if (batch && batch.assignableCount === 0) {
-    el.innerHTML = '<div class="sum-notice warn">' + IC_WARN +
-      '<span>Batch <b>' + esc(batch.batchName) + '</b> tidak punya kandidat yang bisa ditugaskan — seluruh report AI ' +
-      'yang siap sudah dipegang asesor. Batalkan salah satu penugasan di bawah untuk membebaskan kandidat, atau pilih batch lain.</span></div>';
-    return;
-  }
-
-  const miss = [];
-  if (!S.batchId)          miss.push('pilih batch');
-  if (!S.candIds.length)   miss.push('pilih minimal 1 kandidat');
-  if (!S.assessorName.trim()) miss.push('isi nama asesor');
-  const em = S.assessorEmail.trim();
-  if (!em)                 miss.push('isi email asesor');
-  else if (!emailValid(em)) miss.push('perbaiki format email asesor');
-  if (!S.slaStart)         miss.push('isi tanggal mulai');
-  if (!S.slaDue)           miss.push('isi deadline SLA');
-  const dur = slaDuration();
-  if (S.slaStart && S.slaDue && dur != null && dur < 0) miss.push('perbaiki deadline yang lebih awal dari tanggal mulai');
-
-  el.innerHTML = '<div class="sum-notice">' + IC_INFO +
-    '<span>Belum lengkap — ' + miss.map(m => '<span class="miss-tag">' + esc(m) + '</span>').join(' ') + '</span></div>';
+function updateSubmitState() {
+  $('btn-submit').disabled = !formReady();
 }
 
 function submitAssign() {
@@ -1379,7 +1270,6 @@ function submitAssign() {
     assessorEmail: S.assessorEmail,
     slaStart: S.slaStart,
     slaDue: S.slaDue,
-    note: S.note,
   });
   toast(res.msg);
   if (res.ok) {
@@ -1387,10 +1277,8 @@ function submitAssign() {
     S.candIds       = [];
     S.assessorName  = '';
     S.assessorEmail = '';
-    S.note          = '';
     $('f-asr-name').value  = '';
     $('f-asr-email').value = '';
-    $('f-note').value      = '';
   }
   renderAsesorAll();
 }
@@ -1400,59 +1288,16 @@ function resetAsesorForm() {
   S.candIds       = [];
   S.assessorName  = '';
   S.assessorEmail = '';
-  S.note          = '';
   S.slaStart      = AD.offsetISO(0);
   S.slaDue        = AD.offsetISO(7);
   $('f-asr-name').value  = '';
   $('f-asr-email').value = '';
-  $('f-note').value  = '';
   $('f-start').value = S.slaStart;
   $('f-due').value   = S.slaDue;
   $('b-q').value     = '';
   $('c-q').value     = '';
   setBatchFilter('');
   toast('Form direset');
-}
-
-/* ═════════ 4 · Penugasan pada batch ini ═════════ */
-function renderExisting(batch) {
-  if (!batch) { $('card4').hidden = true; V.groups = []; return; }
-  $('card4').hidden = false;
-  $('c4-batch').textContent = batch.batchName;
-
-  const gs = AD.groups().filter(g => g.batchId === batch.id);
-  V.groups = gs;
-
-  if (!gs.length) {
-    $('grp-tbody').innerHTML = '<tr><td colspan="6" class="empty">Belum ada penugasan untuk batch ini.</td></tr>';
-    return;
-  }
-
-  $('grp-tbody').innerHTML = gs.map((g, i) =>
-    '<tr>' +
-      '<td><div class="cell-name">' + esc(g.assessorName) + '</div>' +
-        '<div class="cell-sub">' + esc(g.assessorEmail || '–') + '</div>' +
-        '<div class="cell-sub">ditugaskan ' + esc(AD.fmtDate(g.assignedAt)) + '</div></td>' +
-      '<td>' + g.total + ' kandidat</td>' +
-      '<td>' + bar(g.pct, progColor(g.pct)) +
-        '<div class="cell-sub">' + g.done + '/' + g.total + ' selesai' +
-        (g.review ? ' · ' + g.review + ' direview' : '') + '</div></td>' +
-      '<td style="font-size:12px;">' + esc(AD.fmtDate(g.slaStart)) + ' – ' + esc(AD.fmtDate(g.slaDue)) + '</td>' +
-      '<td><span class="status-badge ' + (SLA_CLASS[g.sla.key] || 'bd-slate') + '">' + esc(g.sla.label) + '</span>' +
-        '<div class="cell-sub">' + esc(AD.slaCountdown(g.sla)) + '</div></td>' +
-      '<td><button class="btn-row-danger" onclick="askCancel(' + i + ')">Batalkan</button></td>' +
-    '</tr>').join('');
-}
-
-function askCancel(i) {
-  const g = V.groups[i];
-  if (!g) return;
-  const yes = confirm('Batalkan penugasan ' + g.total + ' kandidat kepada ' + g.assessorName + '?\\n' +
-                      'Tugas validasi yang sudah dikerjakan akan ikut terhapus.');
-  if (!yes) return;
-  const n = AD.cancelGroup(g.groupId);
-  toast(n + ' tugas validasi dibatalkan');
-  renderAsesorAll();
 }
 
 /* ═════════ Render utama tab Asesor ═════════ */
@@ -1472,8 +1317,7 @@ function renderAsesorAll() {
   renderCandidates(batch);
   renderAssessorFields();
   renderSla();
-  renderSummary(batch);
-  renderExisting(batch);
+  updateSubmitState();
 
   $('card2').classList.toggle('step-locked', !batch);
   $('card3').classList.toggle('step-locked', S.candIds.length === 0);
